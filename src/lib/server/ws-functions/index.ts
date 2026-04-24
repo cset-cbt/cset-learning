@@ -22,3 +22,10 @@ export function moodleError(errorcode: string, message: string) {
 		message
 	};
 }
+
+export function moodleTokenError(errorcode: string, error: string) {
+	return {
+		error,
+		errorcode
+	};
+}

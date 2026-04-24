@@ -1,5 +1,5 @@
 import { relations } from 'drizzle-orm';
-import { boolean, pgTable, text, timestamp, unique } from 'drizzle-orm/pg-core';
+import { boolean, pgTable, serial, text, timestamp, unique } from 'drizzle-orm/pg-core';
 
 const timestamps = {
 	createdAt: timestamp('created_at').notNull().defaultNow(),
@@ -8,6 +8,7 @@ const timestamps = {
 
 export const users = pgTable('users', {
 	id: text('id').primaryKey(),
+	moodleUserId: serial('moodle_user_id').notNull().unique(),
 	name: text('name').notNull(),
 	email: text('email').notNull().unique(),
 	emailVerified: boolean('email_verified').notNull().default(false),

@@ -5,6 +5,7 @@ import { eq } from 'drizzle-orm';
 
 type WsUser = {
 	id: string;
+	moodleUserId: number;
 	name: string;
 	email: string;
 	image: string | null;
@@ -32,23 +33,23 @@ export async function core_webservice_get_site_info(_params: FormData, user: WsU
 		lastname: profile?.lastName ?? user?.name?.split(' ').slice(1).join(' ') ?? '',
 		fullname: user?.name ?? '',
 		lang: profile?.language ?? 'en',
-		userid: user?.id ?? '',
+		userid: user?.moodleUserId ?? 0,
 		siteurl: PUBLIC_SITE_URL,
 		userpictureurl: profile?.avatarUrl ?? user?.image ?? '',
 		functions: [
 			{
 				name: 'core_webservice_get_site_info',
-				version: '1.0'
+				version: '2022112800'
 			},
 			{
 				name: 'core_user_get_users_by_field',
-				version: '1.0'
+				version: '2022112800'
 			}
 		],
-		downloadfiles: 0,
+		downloadfiles: 1,
 		uploadfiles: 0,
-		release: 'CSET Learning 1.0',
-		version: '2026042400',
+		release: '4.1+ (Build: 20221128)',
+		version: '2022112800',
 		mobilecssurl: '',
 		advancedfeatures: [],
 		usercanmanageownfiles: false,

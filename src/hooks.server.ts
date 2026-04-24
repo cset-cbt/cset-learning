@@ -3,11 +3,27 @@ import { building } from '$app/environment';
 import { auth } from '$lib/server/auth';
 import { svelteKitHandler } from 'better-auth/svelte-kit';
 import type { Handle } from '@sveltejs/kit';
-import { getTextDirection } from '$lib/paraglide/runtime';
+import { deLocalizeUrl, getTextDirection } from '$lib/paraglide/runtime';
 import { paraglideMiddleware } from '$lib/paraglide/server';
 
-const handleParaglide: Handle = ({ event, resolve }) =>
-	paraglideMiddleware(event.request, ({ request, locale }) => {
+const API_PATH_PREFIXES = ['/login/', '/webservice/'];
+
+function canonicalPathname(url: string) {
+	return deLocalizeUrl(url).pathname;
+}
+
+function isApiPath(pathname: string) {
+	return API_PATH_PREFIXES.some((prefix) => pathname.startsWith(prefix));
+}
+
+const handleParaglide: Handle = ({ event, resolve }) => {
+	const pathname = canonicalPathname(event.request.url);
+
+	if (isApiPath(pathname)) {
+		return resolve(event);
+	}
+
+	return paraglideMiddleware(event.request, ({ request, locale }) => {
 		event.request = request;
 
 		return resolve(event, {
@@ -17,8 +33,15 @@ const handleParaglide: Handle = ({ event, resolve }) =>
 					.replace('%paraglide.dir%', getTextDirection(locale))
 		});
 	});
+};
 
 const handleBetterAuth: Handle = async ({ event, resolve }) => {
+	const pathname = canonicalPathname(event.request.url);
+
+	if (isApiPath(pathname)) {
+		return resolve(event);
+	}
+
 	event.locals.user = null;
 	event.locals.session = null;
 
@@ -33,15 +56,15 @@ const handleBetterAuth: Handle = async ({ event, resolve }) => {
 };
 
 const handleCors: Handle = async ({ event, resolve }) => {
-	const pathname = new URL(event.request.url).pathname;
+	const pathname = canonicalPathname(event.request.url);
 
-	if (event.request.method === 'OPTIONS' && isCorsPath(pathname)) {
+	if (event.request.method === 'OPTIONS' && isApiPath(pathname)) {
 		return new Response(null, { status: 204, headers: corsHeaders() });
 	}
 
 	const response = await resolve(event);
 
-	if (isCorsPath(pathname)) {
+	if (isApiPath(pathname)) {
 		for (const [key, value] of Object.entries(corsHeaders())) {
 			response.headers.set(key, value);
 		}
@@ -49,10 +72,6 @@ const handleCors: Handle = async ({ event, resolve }) => {
 
 	return response;
 };
-
-function isCorsPath(pathname: string) {
-	return pathname.startsWith('/login/') || pathname.startsWith('/webservice/');
-}
 
 function corsHeaders() {
 	return {
@@ -63,4 +82,4 @@ function corsHeaders() {
 	};
 }
 
-export const handle: Handle = sequence(handleParaglide, handleCors, handleBetterAuth);
+export const handle: Handle = sequence(handleCors, handleParaglide, handleBetterAuth);
