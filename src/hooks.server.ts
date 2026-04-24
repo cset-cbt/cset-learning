@@ -6,7 +6,7 @@ import type { Handle } from '@sveltejs/kit';
 import { deLocalizeUrl, getTextDirection } from '$lib/paraglide/runtime';
 import { paraglideMiddleware } from '$lib/paraglide/server';
 
-const API_PATH_PREFIXES = ['/login/', '/webservice/'];
+const API_PATH_PREFIXES = ['/login/', '/webservice/', '/lib/ajax/'];
 
 function canonicalPathname(url: string) {
 	return deLocalizeUrl(url).pathname;
