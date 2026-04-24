@@ -6,7 +6,19 @@ import { moodleTokenError } from '$lib/server/ws-functions';
 
 const ALLOWED_SERVICES = new Set(['moodle_mobile_app', 'moodle_mobile_app_service']);
 
-export const POST: RequestHandler = async ({ request }) => {
+export const GET: RequestHandler = async ({ url }) => {
+	if (url.searchParams.has('appsitecheck')) {
+		return json({ appsitecheck: 'ok' });
+	}
+
+	return json(moodleTokenError('invalidparameter', 'Missing appsitecheck'));
+};
+
+export const POST: RequestHandler = async ({ request, url }) => {
+	if (url.searchParams.has('appsitecheck')) {
+		return json({ appsitecheck: 'ok' });
+	}
+
 	const formData = await request.formData();
 	const username = formData.get('username')?.toString().trim() ?? '';
 	const password = formData.get('password')?.toString() ?? '';
