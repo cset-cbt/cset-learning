@@ -77,7 +77,7 @@ function corsHeaders() {
 	return {
 		'access-control-allow-origin': '*',
 		'access-control-allow-methods': 'GET, POST, OPTIONS',
-		'access-control-allow-headers': 'content-type, authorization',
+		'access-control-allow-headers': 'content-type, authorization, x-requested-with',
 		'access-control-max-age': '86400'
 	};
 }
