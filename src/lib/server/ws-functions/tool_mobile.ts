@@ -30,7 +30,7 @@ export function tool_mobile_get_public_config() {
 		showloginform: 1,
 		tool_mobile_disabledfeatures: '',
 		mobilecssurl: '',
-		launchurl: '',
+		launchurl: `${wwwroot}/tool/mobile/launch.php`,
 		supportavailability: 0,
 		supportpage: '',
 		warnings: []

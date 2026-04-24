@@ -56,18 +56,14 @@ const handleBetterAuth: Handle = async ({ event, resolve }) => {
 };
 
 const handleCors: Handle = async ({ event, resolve }) => {
-	const pathname = canonicalPathname(event.request.url);
-
-	if (event.request.method === 'OPTIONS' && isApiPath(pathname)) {
+	if (event.request.method === 'OPTIONS') {
 		return new Response(null, { status: 204, headers: corsHeaders() });
 	}
 
 	const response = await resolve(event);
 
-	if (isApiPath(pathname)) {
-		for (const [key, value] of Object.entries(corsHeaders())) {
-			response.headers.set(key, value);
-		}
+	for (const [key, value] of Object.entries(corsHeaders())) {
+		response.headers.set(key, value);
 	}
 
 	return response;

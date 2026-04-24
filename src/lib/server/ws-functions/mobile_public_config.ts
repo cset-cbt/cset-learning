@@ -52,9 +52,10 @@ function getPublicConfig(siteUrl: string) {
 		maintenanceenabled: 0,
 		maintenancemessage: '',
 		typeoflogin: 1,
+		showloginform: 1,
 		mobilecssurl: '',
 		tool_mobile_disabledfeatures: '',
-		launchurl: '',
+		launchurl: `${siteUrl}/tool/mobile/launch.php`,
 		supportavailability: 0,
 		supportpage: '',
 		warnings: []
