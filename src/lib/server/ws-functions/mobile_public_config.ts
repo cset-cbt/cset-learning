@@ -21,6 +21,8 @@ type AjaxFailure = {
 	};
 };
 
+type AjaxResult = Omit<AjaxSuccess, 'index'> | Omit<AjaxFailure, 'index'>;
+
 function stripTrailingSlash(value: string) {
 	return value.replace(/\/$/, '');
 }
@@ -59,7 +61,7 @@ function getPublicConfig(siteUrl: string) {
 	};
 }
 
-function dispatchPublic(methodname: string, siteUrl: string): Omit<AjaxSuccess | AjaxFailure, 'index'> {
+function dispatchPublic(methodname: string, siteUrl: string): AjaxResult {
 	if (methodname === 'tool_mobile_get_public_config') {
 		return { data: getPublicConfig(siteUrl), error: false };
 	}

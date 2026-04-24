@@ -19,13 +19,19 @@ export function moodleError(errorcode: string, message: string) {
 	return {
 		exception: 'moodle_exception',
 		errorcode,
-		message
+		message,
+		stacktrace: null,
+		debuginfo: null,
+		reproductionlink: null
 	};
 }
 
 export function moodleTokenError(errorcode: string, error: string) {
 	return {
 		error,
-		errorcode
+		errorcode,
+		stacktrace: null,
+		debuginfo: null,
+		reproductionlink: null
 	};
 }

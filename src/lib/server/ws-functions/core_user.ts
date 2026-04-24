@@ -14,8 +14,22 @@ export async function core_user_get_users_by_field(params: FormData, user: WsUse
 		return [];
 	}
 
+	const userIds =
+		field === 'id'
+			? values
+					.map((value) => Number.parseInt(value, 10))
+					.filter((value) => Number.isInteger(value) && value > 0)
+			: [];
+
+	if (field === 'id' && userIds.length === 0) {
+		return [];
+	}
+
 	const matches = await db.query.users.findMany({
-		where: inArray(field === 'id' ? users.id : users.email, values),
+		where: inArray(
+			field === 'id' ? users.moodleUserId : users.email,
+			field === 'id' ? userIds : values
+		),
 		with: {
 			profile: true,
 			userRoles: {
@@ -52,7 +66,7 @@ function toMoodleUser(
 	const lastName = user.profile?.lastName ?? user.name.split(' ').slice(1).join(' ') ?? '';
 
 	return {
-		id: user.id,
+		id: user.moodleUserId,
 		username: user.email,
 		firstname: firstName,
 		lastname: lastName,
@@ -81,6 +95,8 @@ function toMoodleUser(
 		profileimageurlsmall: user.profile?.avatarUrl ?? user.image ?? '',
 		profileimageurl: user.profile?.avatarUrl ?? user.image ?? '',
 		roles: roleNames.map((role) => ({ shortname: role, name: role })),
+		groups: [],
+		enrolledcourses: [],
 		customfields: [],
 		preferences: []
 	};

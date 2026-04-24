@@ -4,14 +4,16 @@ import { auth } from '$lib/server/auth';
 import { generateWsToken } from '$lib/server/ws-auth';
 import { moodleTokenError } from '$lib/server/ws-functions';
 
+const ALLOWED_SERVICES = new Set(['moodle_mobile_app', 'moodle_mobile_app_service']);
+
 export const POST: RequestHandler = async ({ request }) => {
 	const formData = await request.formData();
-	const username = formData.get('username')?.toString() ?? '';
+	const username = formData.get('username')?.toString().trim() ?? '';
 	const password = formData.get('password')?.toString() ?? '';
 	const service = formData.get('service')?.toString() ?? '';
 
-	if (service !== 'moodle_mobile_app') {
-		return json(moodleTokenError('servicenotavailable', 'Service unavailable'));
+	if (!ALLOWED_SERVICES.has(service)) {
+		return json(moodleTokenError('servicenotavailable', 'Service not found'));
 	}
 
 	try {
@@ -26,7 +28,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		return json({ token, privatetoken: null });
 	} catch (error) {
 		if (error instanceof APIError) {
-			return json(moodleTokenError('invalidlogin', 'Invalid email or password'));
+			return json(moodleTokenError('invalidlogin', 'Invalid login, please try again'));
 		}
 
 		return json(moodleTokenError('servicenotavailable', 'Service unavailable'));
