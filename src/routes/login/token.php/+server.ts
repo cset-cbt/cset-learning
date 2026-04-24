@@ -19,10 +19,27 @@ export const POST: RequestHandler = async ({ request, url }) => {
 		return json({ appsitecheck: 'ok' });
 	}
 
-	const formData = await request.formData();
-	const username = formData.get('username')?.toString().trim() ?? '';
-	const password = formData.get('password')?.toString() ?? '';
-	const service = formData.get('service')?.toString() ?? '';
+	const contentType = request.headers.get('content-type')?.toLowerCase() ?? '';
+
+	const credentials = await (async () => {
+		if (contentType.includes('application/json')) {
+			const body = (await request.json().catch(() => ({}))) as Record<string, unknown>;
+			return {
+				username: String(body.username ?? '').trim(),
+				password: String(body.password ?? ''),
+				service: String(body.service ?? '')
+			};
+		}
+
+		const formData = await request.formData();
+		return {
+			username: formData.get('username')?.toString().trim() ?? '',
+			password: formData.get('password')?.toString() ?? '',
+			service: formData.get('service')?.toString() ?? ''
+		};
+	})();
+
+	const { username, password, service } = credentials;
 
 	if (!ALLOWED_SERVICES.has(service)) {
 		return json(moodleTokenError('servicenotavailable', 'Service not found'));
@@ -37,7 +54,7 @@ export const POST: RequestHandler = async ({ request, url }) => {
 		});
 
 		const token = await generateWsToken(result.user.id);
-		return json({ token, privatetoken: null });
+		return json({ token, privatetoken: '' });
 	} catch (error) {
 		if (error instanceof APIError) {
 			return json(moodleTokenError('invalidlogin', 'Invalid login, please try again'));

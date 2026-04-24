@@ -40,7 +40,14 @@ export function tool_mobile_get_public_config() {
 export function tool_mobile_get_config() {
 	return {
 		settings: [
+			{ name: 'tool_mobile_forcelogout', value: '0' },
+			{ name: 'tool_mobile_customlangstrings', value: '' },
 			{ name: 'tool_mobile_disabledfeatures', value: '' },
+			{ name: 'tool_mobile_filetypeexclusionlist', value: '' },
+			{ name: 'tool_mobile_custommenuitems', value: '' },
+			{ name: 'tool_mobile_apppolicy', value: '' },
+			{ name: 'tool_mobile_autologout', value: '0' },
+			{ name: 'tool_mobile_autologouttime', value: '0' },
 			{ name: 'tool_mobile_minimumversion', value: '' }
 		],
 		warnings: []

@@ -42,6 +42,14 @@ export async function core_webservice_get_site_info(_params: FormData, user: WsU
 				version: '2022112800'
 			},
 			{
+				name: 'core_course_get_courses',
+				version: '2022112800'
+			},
+			{
+				name: 'core_enrol_get_users_courses',
+				version: '2022112800'
+			},
+			{
 				name: 'tool_mobile_get_public_config',
 				version: '2022112800'
 			},
