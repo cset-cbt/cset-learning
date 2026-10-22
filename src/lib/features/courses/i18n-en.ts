@@ -106,6 +106,7 @@ export const coursesEn: Record<keyof typeof coursesVi, string> = {
   'manage.error.studentNotFound': 'No user account found with this email address.',
   'manage.renameSection': 'Rename',
   'manage.section.renameDialogTitle': 'Rename Course Section',
+  'manage.section.addDialogTitle': 'Add New Course Section',
   'manage.confirmDeleteItemTitle': 'Confirm item deletion',
   'manage.confirmDeleteItem': 'The item and its attachments will be deleted.',
   'manage.itemEyebrow': 'EDIT ITEM',

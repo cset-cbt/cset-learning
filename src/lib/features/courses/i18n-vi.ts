@@ -105,6 +105,7 @@ export const coursesVi = {
   'manage.error.studentNotFound': 'Không tìm thấy tài khoản học viên với email này.',
   'manage.renameSection': 'Đổi tên',
   'manage.section.renameDialogTitle': 'Đổi tên chương / phần',
+  'manage.section.addDialogTitle': 'Thêm chương / phần mới',
   'manage.confirmDeleteItemTitle': 'Xác nhận xóa nội dung',
   'manage.confirmDeleteItem': 'Nội dung và tệp đính kèm liên quan sẽ bị xóa.',
   'manage.itemEyebrow': 'CHỈNH SỬA NỘI DUNG',
