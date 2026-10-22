@@ -52,13 +52,15 @@
     </div>
     <section class="min-w-0 space-y-6">
       <PageHeader eyebrow={$t('courses.playerEyebrow')} title={data.item.title} />
-      {#if isLessonDetail(data.detail)}
-        <LessonView detail={data.detail} completed={data.completed} />
-      {:else if isQuizDetail(data.detail)}
-        <QuizPlayer detail={data.detail} />
-      {:else if isExerciseDetail(data.detail)}
-        <ExercisePlayer detail={data.detail} />
-      {/if}
+      {#key data.item.id}
+        {#if isLessonDetail(data.detail)}
+          <LessonView detail={data.detail} completed={data.completed} />
+        {:else if isQuizDetail(data.detail)}
+          <QuizPlayer detail={data.detail} />
+        {:else if isExerciseDetail(data.detail)}
+          <ExercisePlayer detail={data.detail} />
+        {/if}
+      {/key}
       <nav class="flex flex-wrap justify-between gap-3 border-t border-border pt-5" aria-label={$t('courses.itemNavigation')}>
         {#if data.previousItemId}
           <Button

@@ -57,7 +57,13 @@ export function createRunnerSession(language: ExerciseLanguage): RunnerSession {
 
         request.onPhase?.('compiling');
         const compiled = await engine.compile(request.source);
-        if (!compiled.ok) return { kind: 'compile_error', message: compiled.message };
+        if (!compiled.ok) {
+          if (compiled.message.includes('unavailable') || compiled.message.includes('timed out')) {
+            engine.destroy();
+            engine = null;
+          }
+          return { kind: 'compile_error', message: compiled.message };
+        }
 
         request.onPhase?.('running');
         const runs: TestRun[] = [];

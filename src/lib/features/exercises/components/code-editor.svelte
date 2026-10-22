@@ -16,7 +16,7 @@
 
   let { value = $bindable(''), language, readonly = false, label, onrun }: Props = $props();
   let host: HTMLDivElement;
-  let editorView: EditorView | null = null;
+  let editorView = $state<EditorView | null>(null);
   let languageCompartment: Compartment | null = null;
   let readonlyCompartment: Compartment | null = null;
   let languageExtensions: Record<ExerciseLanguage, Extension> | null = null;

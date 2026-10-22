@@ -30,7 +30,11 @@ self.onmessage = async ({ data }) => {
         self.postMessage({ type: 'executed', id: data.id, stdout: '', stderr: '', exitCode: null, thrown: String((e && e.message) || e) });
       }
     }
-  } catch (e) { self.postMessage({ type: 'boot-error', id: data.id, error: String((e && e.message) || e) }); }
+  } catch (e) {
+    const payload = { type: 'boot-error', error: String((e && e.message) || e) };
+    if (data && typeof data.id === 'number') payload.id = data.id;
+    self.postMessage(payload);
+  }
 };
 `;
 }

@@ -18,7 +18,7 @@
 <div class="space-y-6">
   <form method="POST" action="?/saveLesson" class="space-y-4">
     <Tabs bind:value={view} items={tabs} />
-    {#if view === 'write'}
+    <div class:hidden={view !== 'write'}>
       <InputField
         label={$t('lesson.body')}
         name="bodyMd"
@@ -27,7 +27,8 @@
         value={draft}
         oninput={(event: Event) => (draft = eventValue(event))}
       />
-    {:else}
+    </div>
+    {#if view === 'preview'}
       <div class="min-h-80 rounded-sm border border-border bg-surface p-5">
         <MarkdownContent source={draft} />
       </div>

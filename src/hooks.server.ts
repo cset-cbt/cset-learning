@@ -15,7 +15,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 
   if (!building) {
     const session = await runtime.auth.api.getSession({ headers: event.request.headers });
-    if (session) {
+    if (session && !session.user.banned) {
       event.locals.user = toSessionUser(session.user);
       event.locals.session = session.session;
     }

@@ -50,6 +50,7 @@ export const GET: RequestHandler = async ({ locals, params, url }) => {
       'Content-Length': String(row.attachment.sizeBytes),
       'Content-Disposition': `${disposition}; filename*=UTF-8''${fileName}`,
       'X-Content-Type-Options': 'nosniff',
+      'Content-Security-Policy': "sandbox; default-src 'none'",
       'Cache-Control': 'private, max-age=300'
     }
   });

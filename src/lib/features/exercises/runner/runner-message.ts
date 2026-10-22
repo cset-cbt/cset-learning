@@ -13,7 +13,7 @@ export function isWorkerMessage<Type extends string>(
     value !== null &&
     'type' in value &&
     value.type === type &&
-    (!('id' in value) || typeof value.id === 'number') &&
+    (!('id' in value) || value.id === undefined || typeof value.id === 'number') &&
     (id === undefined || ('id' in value && value.id === id))
   );
 }

@@ -92,10 +92,14 @@
       if (!submit) return;
 
       const payload = {
-        sourceCode,
-        compileError: result.kind === 'compile_error' ? result.message : null,
+        sourceCode: sourceCode.slice(0, 65536),
+        compileError: result.kind === 'compile_error' ? result.message.slice(0, 4000) : null,
         results: result.kind === 'completed'
-          ? result.runs.map(({ outcome, stdout, ms }) => ({ outcome, stdout, ms }))
+          ? result.runs.map(({ outcome, stdout, ms }) => ({
+              outcome,
+              stdout: stdout.slice(0, 20000),
+              ms: Math.min(Math.max(0, Math.round(ms)), 120000)
+            }))
           : []
       };
       const formData = new FormData();

@@ -70,6 +70,10 @@ export async function resetUserPassword(
     headers,
     body: { userId: input.userId, newPassword: input.newPassword }
   });
+  await auth.api.revokeUserSessions({
+    headers,
+    body: { userId: input.userId }
+  });
   await writeAudit(db, actor.id, 'admin.user.set_password', input.userId);
 }
 

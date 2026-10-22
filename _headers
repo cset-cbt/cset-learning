@@ -6,4 +6,4 @@
 
 /runtimes/tracejvm/*/browser-worker.js
   Cross-Origin-Embedder-Policy: require-corp
-  Content-Security-Policy: default-src 'none'; script-src 'self' data:; connect-src 'self'
+  Content-Security-Policy: default-src 'none'; script-src 'self'; connect-src 'self'
