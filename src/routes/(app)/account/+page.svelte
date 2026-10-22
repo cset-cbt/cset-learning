@@ -49,7 +49,7 @@
   }
 </script>
 
-<div class="mx-auto max-w-2xl space-y-6">
+<div class="w-full max-w-5xl space-y-6">
   <PageHeader eyebrow={$t('account.eyebrow')} title={$t('account.title')}>
     {$t('account.description')}
   </PageHeader>

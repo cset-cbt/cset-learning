@@ -131,3 +131,66 @@
   border-radius: 2px;
   background: var(--ui-surface);
 }
+
+/* Standardized Control Heights:
+   Ensure inputs, buttons, and select triggers on the same row share identical heights. */
+:root {
+  --control-h-default: 2.5rem;
+  --control-h-sm: 2rem;
+}
+
+/* Single-line text inputs */
+input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='file']) {
+  height: var(--control-h-default);
+  box-sizing: border-box;
+}
+
+/* Standard buttons and link-buttons */
+button.mono-label,
+a.mono-label.btn-solid,
+a.mono-label.border {
+  height: var(--control-h-default);
+  box-sizing: border-box;
+  line-height: 1;
+}
+
+/* Select triggers */
+.select-trigger--field,
+.select-trigger--md {
+  height: var(--control-h-default) !important;
+  min-height: var(--control-h-default) !important;
+  box-sizing: border-box;
+}
+
+.select-trigger--sm {
+  height: var(--control-h-sm) !important;
+  min-height: var(--control-h-sm) !important;
+  box-sizing: border-box;
+}
+
+/* Compact button modifier */
+.btn-control-sm,
+button.btn-control-sm,
+button.mono-label.btn-control-sm,
+a.mono-label.btn-control-sm {
+  height: var(--control-h-sm) !important;
+  min-height: var(--control-h-sm) !important;
+  padding-block: 0.25rem !important;
+  padding-inline: 0.65rem !important;
+  font-size: 0.72rem !important;
+}
+
+/* Icon-only square buttons in toolbars */
+.btn-icon-sq,
+button.mono-label.btn-icon-sq {
+  width: var(--control-h-default) !important;
+  height: var(--control-h-default) !important;
+  padding: 0 !important;
+}
+
+.btn-icon-sq-sm,
+button.mono-label.btn-icon-sq-sm {
+  width: var(--control-h-sm) !important;
+  height: var(--control-h-sm) !important;
+  padding: 0 !important;
+}

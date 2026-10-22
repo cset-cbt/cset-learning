@@ -16,6 +16,11 @@ export function isLocale(value: string | null | undefined): value is Locale {
   return value === 'vi' || value === 'en';
 }
 
+// Narrows an untrusted string (for example an action failure key) to a known message key.
+export function isMessageKey(value: unknown): value is MessageKey {
+  return typeof value === 'string' && Object.hasOwn(messages.vi, value);
+}
+
 export function translate(
   current: Locale,
   key: MessageKey,

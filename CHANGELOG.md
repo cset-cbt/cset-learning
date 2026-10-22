@@ -10,3 +10,9 @@ All notable changes to CSET Learning are documented here, following Keep a Chang
 - Application shell with `cset-ui`: login, register, account settings, Vietnamese and English localization, public `/legal` page.
 - Database schema for courses, sections, items, enrollment, progress, lessons, attachments, quizzes and coding exercises (migration `0000`).
 - Shared course item access resolvers and the browser Markdown pipeline (markdown-it, highlight.js, KaTeX, DOMPurify).
+- Course authoring, section and item outline reordering, and publishing validation.
+- Theory lessons with Cloudflare R2 file attachments and sanitized Markdown viewer with KaTeX and syntax highlighting.
+- Quiz engine supporting 6 question kinds (single choice, multiple choice, true/false, short answer, numeric, matching) with server-side secret grading and attempt limits.
+- In-browser code runner executing Python (Pyodide), C++ (Clang WASM) and Java (TraceJVM) inside isolated Web Workers.
+- Administrator portal for user role assignment, password resets, account suspension, and audit logging.
+- Full-width responsive layout and unified form control heights across all views.

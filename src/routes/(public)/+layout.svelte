@@ -9,14 +9,14 @@
 </script>
 
 <div class="flex min-h-[100dvh] flex-col">
-  <header class="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-4 sm:px-8">
+  <header class="flex w-full items-center justify-between px-4 py-4 sm:px-8 lg:px-12">
     <a href={resolve('/')} aria-label={$t('nav.home')}><Logo size={1.5} /></a>
     <div class="flex items-center gap-3">
       <LocaleToggle value={$locale} onLocaleChange={setLocale} />
       <ThemeToggle />
     </div>
   </header>
-  <main class="mx-auto w-full max-w-6xl flex-1 px-4 pb-12 sm:px-8">
+  <main class="w-full flex-1 px-4 pb-12 sm:px-8 lg:px-12">
     {@render children?.()}
   </main>
   <AppFooter />

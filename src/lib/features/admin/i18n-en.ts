@@ -1,3 +1,41 @@
 import type { adminVi } from './i18n-vi';
 
-export const adminEn: Record<keyof typeof adminVi, string> = {};
+export const adminEn: Record<keyof typeof adminVi, string> = {
+  'admin.eyebrow': 'ADMINISTRATION',
+  'admin.title': 'Users',
+  'admin.description': 'Manage roles, reset passwords and suspend accounts.',
+  'admin.total': '{count} users',
+  'admin.empty': 'No users found.',
+  'admin.you': 'You',
+  'admin.search.label': 'SEARCH BY EMAIL',
+  'admin.search.submit': 'Search',
+  'admin.search.clear': 'Clear filter',
+  'admin.table.name': 'NAME',
+  'admin.table.email': 'EMAIL',
+  'admin.table.role': 'ROLE',
+  'admin.table.status': 'STATUS',
+  'admin.table.created': 'CREATED',
+  'admin.table.actions': 'ACTIONS',
+  'admin.status.active': 'Active',
+  'admin.status.banned': 'Suspended',
+  'admin.role.save': 'Save role',
+  'admin.role.saved': 'Role updated.',
+  'admin.password.open': 'Reset password',
+  'admin.password.title': 'Reset the password of {name}',
+  'admin.password.description':
+    'The new password takes effect immediately. Send it to the user through a safe channel.',
+  'admin.password.field': 'NEW PASSWORD',
+  'admin.password.submit': 'Set password',
+  'admin.password.saved': 'Password reset.',
+  'admin.ban.open': 'Suspend',
+  'admin.ban.title': 'Suspend the account of {name}',
+  'admin.ban.description':
+    'The user will be signed out and cannot sign in again until the account is restored.',
+  'admin.ban.reason': 'REASON (OPTIONAL)',
+  'admin.ban.submit': 'Suspend account',
+  'admin.ban.saved': 'Account suspended.',
+  'admin.unban.open': 'Restore',
+  'admin.unban.saved': 'Account restored.',
+  'admin.error.self': 'You cannot change your own role or suspend yourself.',
+  'admin.error.invalid': 'Invalid input.'
+};

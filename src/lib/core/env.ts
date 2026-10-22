@@ -36,7 +36,10 @@ function randomSecret(): string {
 
 export function resolveEnv(platformEnv?: RuntimeBindings): LearningEnv {
   const processEnv = processBindings();
-  const raw = { ...processEnv, ...(platformEnv ?? {}) };
+  // The process environment wins over the platform bindings (.dev.vars in local dev): that lets
+  // several dev servers run side by side with their own LEARNING_BASE_URL. On Workers both
+  // sources carry the same values (nodejs_compat_populate_process_env).
+  const raw = { ...(platformEnv ?? {}), ...processEnv };
   const nodeEnv = value(processEnv, 'NODE_ENV') ?? value(platformEnv ?? {}, 'NODE_ENV');
   const isViteDev = nodeEnv !== 'test' && import.meta.env?.DEV === true;
   const isBuild = platformEnv === undefined && value(processEnv, 'LEARNING_BUILD') === '1';

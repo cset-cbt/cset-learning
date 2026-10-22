@@ -1,2 +1,26 @@
 // Vietnamese strings of the lessons domain (keys are prefixed by the domain namespace).
-export const lessonsVi = {} as const;
+export const lessonsVi = {
+  'lesson.write': 'Soạn thảo',
+  'lesson.preview': 'Xem trước',
+  'lesson.body': 'Nội dung Markdown',
+  'lesson.attachments': 'Tệp đính kèm',
+  'lesson.attachmentGuidance': 'Cho phép PDF, ảnh, văn bản và ZIP. Kích thước tối đa 10 MiB mỗi tệp.',
+  'lesson.chooseFile': 'Chọn tệp',
+  'lesson.upload': 'Tải tệp lên',
+  'lesson.copyMarkdown': 'Sao chép liên kết Markdown',
+  'lesson.noAttachments': 'Chưa có tệp đính kèm.',
+  'lesson.attachmentCopied': 'Đã sao chép liên kết Markdown.',
+  'lesson.error.copyFailed': 'Không thể sao chép liên kết.',
+  'lesson.kilobytes': 'KB',
+  'lesson.confirmDeleteAttachmentTitle': 'Xác nhận xóa tệp',
+  'lesson.confirmDeleteAttachment': 'Tệp này sẽ bị xóa khỏi bài học.',
+  'lesson.completed': 'Bạn đã hoàn thành bài học này.',
+  'lesson.markComplete': 'Đánh dấu hoàn thành',
+  'lesson.error.fileSize': 'Tệp phải có kích thước từ 1 byte đến 10 MiB.',
+  'lesson.error.fileType': 'Định dạng tệp không được hỗ trợ.',
+  'lesson.error.fileContent': 'Nội dung tệp không khớp với định dạng đã chọn.',
+  'lesson.error.tooManyFiles': 'Mỗi bài học chỉ được có tối đa 20 tệp.',
+  'lesson.error.fileName': 'Tên tệp không hợp lệ.',
+  'lesson.error.invalidBody': 'Nội dung bài học vượt quá giới hạn cho phép.',
+  'lesson.error.invalidInput': 'Thông tin tệp không hợp lệ.'
+} as const;

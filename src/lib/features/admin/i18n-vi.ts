@@ -1,2 +1,40 @@
-// Vietnamese strings of the admin domain (keys are prefixed by the domain namespace).
-export const adminVi = {} as const;
+// Vietnamese strings of the admin domain (user management).
+export const adminVi = {
+  'admin.eyebrow': 'QUẢN TRỊ',
+  'admin.title': 'Người dùng',
+  'admin.description': 'Quản lý vai trò, đặt lại mật khẩu và khóa tài khoản.',
+  'admin.total': '{count} người dùng',
+  'admin.empty': 'Không tìm thấy người dùng nào.',
+  'admin.you': 'Bạn',
+  'admin.search.label': 'TÌM THEO EMAIL',
+  'admin.search.submit': 'Tìm kiếm',
+  'admin.search.clear': 'Xóa bộ lọc',
+  'admin.table.name': 'HỌ TÊN',
+  'admin.table.email': 'EMAIL',
+  'admin.table.role': 'VAI TRÒ',
+  'admin.table.status': 'TRẠNG THÁI',
+  'admin.table.created': 'NGÀY TẠO',
+  'admin.table.actions': 'THAO TÁC',
+  'admin.status.active': 'Hoạt động',
+  'admin.status.banned': 'Đã khóa',
+  'admin.role.save': 'Lưu vai trò',
+  'admin.role.saved': 'Đã cập nhật vai trò.',
+  'admin.password.open': 'Đặt lại mật khẩu',
+  'admin.password.title': 'Đặt lại mật khẩu cho {name}',
+  'admin.password.description':
+    'Mật khẩu mới có hiệu lực ngay. Hãy gửi cho người dùng qua một kênh an toàn.',
+  'admin.password.field': 'MẬT KHẨU MỚI',
+  'admin.password.submit': 'Đặt mật khẩu',
+  'admin.password.saved': 'Đã đặt lại mật khẩu.',
+  'admin.ban.open': 'Khóa',
+  'admin.ban.title': 'Khóa tài khoản {name}',
+  'admin.ban.description':
+    'Người dùng sẽ bị đăng xuất và không thể đăng nhập cho đến khi được mở khóa.',
+  'admin.ban.reason': 'LÝ DO (TÙY CHỌN)',
+  'admin.ban.submit': 'Khóa tài khoản',
+  'admin.ban.saved': 'Đã khóa tài khoản.',
+  'admin.unban.open': 'Mở khóa',
+  'admin.unban.saved': 'Đã mở khóa tài khoản.',
+  'admin.error.self': 'Bạn không thể thay đổi vai trò hoặc khóa chính mình.',
+  'admin.error.invalid': 'Dữ liệu không hợp lệ.'
+} as const;

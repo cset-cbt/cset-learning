@@ -1,26 +1,30 @@
 import type { QuizQuestionKind } from '../schema';
+import type { QuestionAnswerKeyMap, QuestionConfigMap } from './question-types';
 
-// Data contract between the quiz domain and the course item pages (editor and player).
 export interface QuizSettings {
   passPercent: number;
   maxAttempts: number | null;
 }
 
-// What a learner may see before submitting: never the answer key or the explanation.
-export interface PublicQuestion {
+type PublicQuestionFor<K extends QuizQuestionKind> = {
   id: string;
-  kind: QuizQuestionKind;
+  kind: K;
   promptMd: string;
   points: number;
-  config: unknown;
-}
+  config: QuestionConfigMap[K];
+};
 
-// What an editor sees: everything, including the answer key.
-export interface EditorQuestion extends PublicQuestion {
-  position: number;
-  answerKey: unknown;
-  explanationMd: string | null;
-}
+export type PublicQuestion = {
+  [K in QuizQuestionKind]: PublicQuestionFor<K>;
+}[QuizQuestionKind];
+
+export type EditorQuestion = {
+  [K in QuizQuestionKind]: PublicQuestionFor<K> & {
+    position: number;
+    answerKey: QuestionAnswerKeyMap[K];
+    explanationMd: string | null;
+  };
+}[QuizQuestionKind];
 
 export interface QuizEditorData {
   settings: QuizSettings;
@@ -32,4 +36,30 @@ export interface QuizPlayerData {
   questions: PublicQuestion[];
   attemptsUsed: number;
   bestScorePercent: number | null;
+}
+
+export type QuizReviewAnswer =
+  | string
+  | string[]
+  | boolean
+  | { value: number; tolerance: number; unit?: string }
+  | { left: string; right: string }[];
+
+export interface QuizReviewItem {
+  questionId: string;
+  correct: boolean;
+  earned: number;
+  explanationMd: string | null;
+  correctAnswer: QuizReviewAnswer;
+}
+
+export interface QuizResult {
+  earnedPoints: number;
+  totalPoints: number;
+  scorePercent: number;
+  passed: boolean;
+  attemptsUsed: number;
+  maxAttempts: number | null;
+  bestScorePercent: number;
+  review: QuizReviewItem[];
 }

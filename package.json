@@ -5,7 +5,9 @@
   "type": "module",
   "license": "AGPL-3.0-only",
   "scripts": {
-    "dev": "vite dev --host 0.0.0.0 --port 4177",
+    "predev": "node scripts/prepare-runtimes.ts",
+    "prebuild": "node scripts/prepare-runtimes.ts",
+    "dev": "vite dev --host localhost --port 4177",
     "build": "LEARNING_BUILD=1 vite build",
     "preview": "bun run build && wrangler dev --port 4177",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",

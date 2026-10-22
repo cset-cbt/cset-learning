@@ -7,9 +7,8 @@
 
 <footer class="mt-auto border-t border-border bg-surface/40">
   <div
-    class="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-5 sm:px-8"
+    class="flex w-full flex-wrap items-center justify-between gap-4 px-4 py-5 sm:px-8 lg:px-12"
   >
-    <p class="mono-label text-[0.68rem] text-ink-muted">CSET // {$t('footer.tagline')}</p>
     <div class="mono-label flex items-center gap-5 text-[0.68rem]">
       <a
         href={SOURCE_URL}

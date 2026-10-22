@@ -11,7 +11,7 @@
 <div class="relative flex min-h-[100dvh] flex-col">
   <AppHeader user={data.user} />
   <main
-    class="mx-auto w-full max-w-6xl flex-1 px-4 py-8 transition-opacity duration-200 sm:px-8 {navigating.to
+    class="w-full flex-1 px-4 py-8 transition-opacity duration-200 sm:px-8 lg:px-12 {navigating.to
       ? 'pointer-events-none opacity-50'
       : 'opacity-100'}"
   >

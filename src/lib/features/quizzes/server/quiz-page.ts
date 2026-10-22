@@ -1,32 +1,116 @@
 import type { Action } from '@sveltejs/kit';
+import { z } from 'zod';
+import { requireStaff, requireUser } from '$lib/core/auth/guards';
 import type { SessionUser } from '$lib/core/auth/session-user';
+import { actionFailure, NotFoundError, ValidationError } from '$lib/core/errors';
 import type { LearningDb } from '$lib/core/db/client';
+import { loadQuizForLearner, submitAttempt } from './quiz-attempt-service';
+import { deleteQuestion, getQuizForEditor, moveQuestion, saveQuestion, updateQuizSettings } from './quiz-service';
 import type { QuizEditorData, QuizPlayerData } from '../shared/contract';
+import { parseQuizAnswers, parseQuestionActionId } from '../validation';
 
-// Entry points used by the course item routes. Contract (do not rename):
-//  - loadQuizEditor / loadQuizPlayer verify access themselves (resolveManagedItem / resolveLearnerItem).
-//  - quizEditorActions are merged into items/[itemId]/+page.server.ts actions
-//    (saveQuizSettings, saveQuestion, deleteQuestion, moveQuestion).
-//  - submitQuizAction is dispatched by the player `submit` action for quiz items.
-// Every action returns `{ ok: true, ... }` on success and uses `actionFailure` on errors.
+const directionSchema = z.enum(['up', 'down']);
+
 export async function loadQuizEditor(
-  _db: LearningDb,
-  _user: SessionUser,
-  _itemId: string
+  db: LearningDb,
+  user: SessionUser,
+  itemId: string
 ): Promise<QuizEditorData> {
-  throw new Error('The quiz editor is provided by the quiz engine step');
+  return getQuizForEditor(db, user, itemId);
 }
 
-export const quizEditorActions: Record<string, Action> = {};
+export const quizEditorActions: Record<string, Action> = {
+  saveQuizSettings: async (event) => {
+    try {
+      const user = requireStaff(event.locals, event.url);
+      const itemId = routeItemId(event.params.itemId);
+      const form = await event.request.formData();
+      const maxAttemptsText = field(form, 'maxAttempts');
+      await updateQuizSettings(event.locals.runtime.db, user, itemId, {
+        passPercent: Number(field(form, 'passPercent')),
+        maxAttempts: maxAttemptsText === '' ? null : Number(maxAttemptsText)
+      });
+      return { ok: true };
+    } catch (cause) {
+      return actionFailure(cause);
+    }
+  },
+  saveQuestion: async (event) => {
+    try {
+      const user = requireStaff(event.locals, event.url);
+      const itemId = routeItemId(event.params.itemId);
+      const form = await event.request.formData();
+      const questionId = field(form, 'questionId');
+      await saveQuestion(event.locals.runtime.db, user, itemId, {
+        ...(questionId ? { questionId } : {}),
+        kind: field(form, 'kind'),
+        promptMd: field(form, 'promptMd'),
+        points: Number(field(form, 'points')),
+        explanationMd: field(form, 'explanationMd') || null,
+        spec: field(form, 'spec')
+      });
+      return { ok: true };
+    } catch (cause) {
+      return actionFailure(cause);
+    }
+  },
+  deleteQuestion: async (event) => {
+    try {
+      const user = requireStaff(event.locals, event.url);
+      const itemId = routeItemId(event.params.itemId);
+      const form = await event.request.formData();
+      const questionId = parseQuestionActionId(field(form, 'questionId'));
+      if (!questionId) throw new ValidationError('quiz.error.invalidQuestion');
+      await deleteQuestion(event.locals.runtime.db, user, itemId, questionId);
+      return { ok: true };
+    } catch (cause) {
+      return actionFailure(cause);
+    }
+  },
+  moveQuestion: async (event) => {
+    try {
+      const user = requireStaff(event.locals, event.url);
+      const itemId = routeItemId(event.params.itemId);
+      const form = await event.request.formData();
+      const questionId = parseQuestionActionId(field(form, 'questionId'));
+      const direction = directionSchema.safeParse(field(form, 'direction'));
+      if (!questionId || !direction.success) throw new ValidationError('quiz.error.invalidQuestion');
+      await moveQuestion(event.locals.runtime.db, user, itemId, questionId, direction.data);
+      return { ok: true };
+    } catch (cause) {
+      return actionFailure(cause);
+    }
+  }
+};
 
 export async function loadQuizPlayer(
-  _db: LearningDb,
-  _user: SessionUser,
-  _itemId: string
+  db: LearningDb,
+  user: SessionUser,
+  itemId: string
 ): Promise<QuizPlayerData> {
-  throw new Error('The quiz player is provided by the quiz engine step');
+  return loadQuizForLearner(db, user, itemId);
 }
 
-export const submitQuizAction: Action = async () => {
-  throw new Error('Quiz submission is provided by the quiz engine step');
+export const submitQuizAction: Action = async (event) => {
+  try {
+    const user = requireUser(event.locals, event.url);
+    const itemId = routeItemId(event.params.itemId);
+    const form = await event.request.formData();
+    const answers = parseQuizAnswers(field(form, 'answers'));
+    if (!answers) throw new ValidationError('quiz.error.invalidAnswers');
+    const quizResult = await submitAttempt(event.locals.runtime.db, user, itemId, answers);
+    return { ok: true, quizResult };
+  } catch (cause) {
+    return actionFailure(cause);
+  }
 };
+
+function routeItemId(value: string | undefined): string {
+  if (!value) throw new NotFoundError();
+  return value;
+}
+
+function field(form: FormData, name: string): string {
+  const value = form.get(name);
+  return typeof value === 'string' ? value : '';
+}

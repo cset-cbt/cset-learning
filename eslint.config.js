@@ -8,7 +8,7 @@ export default [
   {
     files: ['**/*.svelte'],
     languageOptions: { parserOptions: { parser: tsParser } },
-    rules: { 'no-undef': 'off' }
+    rules: { 'no-undef': 'off', 'no-unused-vars': 'off' }
   },
   {
     files: ['**/*.ts'],
@@ -22,6 +22,7 @@ export default [
       'build/**',
       '.wrangler/**',
       'drizzle/**',
+      'static/**',
       'worker-configuration.d.ts'
     ]
   }

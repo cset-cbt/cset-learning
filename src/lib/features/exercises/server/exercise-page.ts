@@ -1,32 +1,77 @@
 import type { Action } from '@sveltejs/kit';
 import type { SessionUser } from '$lib/core/auth/session-user';
+import { requireStaff, requireUser } from '$lib/core/auth/guards';
 import type { LearningDb } from '$lib/core/db/client';
+import { actionFailure, NotFoundError, ValidationError } from '$lib/core/errors';
+import { parseExerciseInput } from '../shared/validation';
 import type { ExerciseEditorData, ExercisePlayerData } from '../shared/contract';
+import { getExerciseForEditor, loadExerciseForLearner, saveExercise } from './exercise-service';
+import { submitExercise } from './submission-service';
 
-// Entry points used by the course item routes. Contract (do not rename):
-//  - loadExerciseEditor / loadExercisePlayer verify access themselves
-//    (resolveManagedItem / resolveLearnerItem).
-//  - exerciseEditorActions are merged into items/[itemId]/+page.server.ts actions (saveExercise).
-//  - submitExerciseAction is dispatched by the player `submit` action for exercise items.
-// Every action returns `{ ok: true, ... }` on success and uses `actionFailure` on errors.
 export async function loadExerciseEditor(
-  _db: LearningDb,
-  _user: SessionUser,
-  _itemId: string
+  db: LearningDb,
+  user: SessionUser,
+  itemId: string
 ): Promise<ExerciseEditorData> {
-  throw new Error('The exercise editor is provided by the exercise runner step');
+  return getExerciseForEditor(db, user, itemId);
 }
 
-export const exerciseEditorActions: Record<string, Action> = {};
+function stringField(data: FormData, name: string): string {
+  const value = data.get(name);
+  if (typeof value !== 'string') throw new ValidationError('exercise.error.invalidExercise');
+  return value;
+}
+
+function parseTests(raw: string): unknown {
+  try {
+    return JSON.parse(raw);
+  } catch {
+    throw new ValidationError('exercise.error.invalidExercise');
+  }
+}
+
+const saveExerciseAction: Action = async (event) => {
+  try {
+    const user = requireStaff(event.locals, event.url);
+    const itemId = event.params.itemId;
+    if (!itemId) throw new NotFoundError();
+    const data = await event.request.formData();
+    const input = parseExerciseInput({
+      language: stringField(data, 'language'),
+      promptMd: stringField(data, 'promptMd'),
+      starterCode: stringField(data, 'starterCode'),
+      timeLimitMs: Number(stringField(data, 'timeLimitMs')),
+      tests: parseTests(stringField(data, 'tests'))
+    });
+    await saveExercise(event.locals.runtime.db, user, itemId, input);
+    return { ok: true };
+  } catch (cause) {
+    return actionFailure(cause);
+  }
+};
+
+export const exerciseEditorActions: Record<string, Action> = {
+  saveExercise: saveExerciseAction
+};
 
 export async function loadExercisePlayer(
-  _db: LearningDb,
-  _user: SessionUser,
-  _itemId: string
+  db: LearningDb,
+  user: SessionUser,
+  itemId: string
 ): Promise<ExercisePlayerData> {
-  throw new Error('The exercise player is provided by the exercise runner step');
+  return loadExerciseForLearner(db, user, itemId);
 }
 
-export const submitExerciseAction: Action = async () => {
-  throw new Error('Exercise submission is provided by the exercise runner step');
+export const submitExerciseAction: Action = async (event) => {
+  try {
+    const user = requireUser(event.locals, event.url);
+    const itemId = event.params.itemId;
+    if (!itemId) throw new NotFoundError();
+    const data = await event.request.formData();
+    const payload = stringField(data, 'payload');
+    const exerciseResult = await submitExercise(event.locals.runtime.db, user, itemId, payload);
+    return { ok: true, exerciseResult };
+  } catch (cause) {
+    return actionFailure(cause);
+  }
 };
