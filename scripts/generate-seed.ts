@@ -12,14 +12,15 @@ const sql = `
 -- Default password for all seeded accounts: Cset@2026
 
 -- 1. Users & Credentials
-INSERT INTO \`user\` (\`id\`, \`name\`, \`email\`, \`email_verified\`, \`role\`, \`banned\`, \`created_at\`, \`updated_at\`) VALUES
-  ('usr_admin', 'Vo Minh Long (Core Admin)', 'admin@cset.club', 1, 'admin', 0, ${now}, ${now}),
-  ('usr_instructor', 'Hoang Mai (Giang vien)', 'instructor@cset.club', 1, 'instructor', 0, ${now}, ${now}),
-  ('usr_student', 'Nguyen Van An (Hoc vien)', 'student@cset.club', 1, 'student', 0, ${now}, ${now})
+INSERT INTO \`user\` (\`id\`, \`name\`, \`email\`, \`email_verified\`, \`role\`, \`image\`, \`banned\`, \`created_at\`, \`updated_at\`) VALUES
+  ('usr_admin', 'Võ Minh Long (Core Admin)', 'admin@cset.club', 1, 'admin', 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&q=80&auto=format&fit=crop', 0, ${now}, ${now}),
+  ('usr_instructor', 'Hoàng Mai (Giảng viên)', 'instructor@cset.club', 1, 'instructor', 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&q=80&auto=format&fit=crop', 0, ${now}, ${now}),
+  ('usr_student', 'Nguyễn Văn An (Học viên)', 'student@cset.club', 1, 'student', NULL, 0, ${now}, ${now})
 ON CONFLICT(\`id\`) DO UPDATE SET
   \`name\`=excluded.name,
   \`email\`=excluded.email,
   \`role\`=excluded.role,
+  \`image\`=excluded.image,
   \`updated_at\`=excluded.updated_at;
 
 INSERT INTO \`account\` (\`id\`, \`account_id\`, \`provider_id\`, \`user_id\`, \`password\`, \`created_at\`, \`updated_at\`) VALUES
@@ -30,32 +31,40 @@ ON CONFLICT(\`id\`) DO UPDATE SET
   \`password\`=excluded.password,
   \`updated_at\`=excluded.updated_at;
 
--- 2. Course 1: Published Comprehensive Course
-INSERT INTO \`course\` (\`id\`, \`slug\`, \`title\`, \`summary\`, \`status\`, \`owner_id\`, \`created_at\`, \`updated_at\`) VALUES
-  ('crs_intro_cp', 'nhap-mon-lap-trinh-thi-dau', 'Nhap mon Lap trinh Thi dau & Khoa hoc May tinh', 'Khoa hoc nen tang toan dien cua CLB CSET: ly thuyet thuat toan, toan roi rac, trac nghiem va he thong bai tap thuc hanh Python, C++ va Java.', 'published', 'usr_instructor', ${now}, ${now})
+-- Clean up older smoke test courses to ensure a clean catalog
+DELETE FROM \`course\` WHERE \`slug\` IN ('quiz-engine-smoke-course', 'lap-trinh-python-co-ban', 'lap-trinh-python-co-ban-27bw');
+
+-- 2. Course 1: Nhập môn Lập trình Thi đấu & Khoa học Máy tính (Published)
+INSERT INTO \`course\` (\`id\`, \`slug\`, \`title\`, \`summary\`, \`cover_image_url\`, \`status\`, \`owner_id\`, \`created_at\`, \`updated_at\`) VALUES
+  ('crs_intro_cp', 'nhap-mon-lap-trinh-thi-dau',
+   'Nhập môn Lập trình Thi đấu & Khoa học Máy tính',
+   'Khóa học nền tảng toàn diện của CLB CSET: lý thuyết thuật toán, cấu trúc dữ liệu, trắc nghiệm và hệ thống bài tập thực hành trực tuyến Python, C++ và Java.',
+   'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=1200&q=80&auto=format&fit=crop',
+   'published', 'usr_instructor', ${now}, ${now})
 ON CONFLICT(\`id\`) DO UPDATE SET
   \`title\`=excluded.title,
   \`summary\`=excluded.summary,
+  \`cover_image_url\`=excluded.cover_image_url,
   \`status\`=excluded.status,
   \`updated_at\`=excluded.updated_at;
 
 -- Sections for Course 1
 INSERT INTO \`course_section\` (\`id\`, \`course_id\`, \`title\`, \`position\`, \`created_at\`) VALUES
-  ('sec_theory', 'crs_intro_cp', 'Phan 1: Ly thuyet can ban & Thuat toan', 1, ${now}),
-  ('sec_quiz', 'crs_intro_cp', 'Phan 2: Kiem tra kien thuc tong hop', 2, ${now}),
-  ('sec_coding', 'crs_intro_cp', 'Phan 3: Luyen tap lap trinh truc tuyen', 3, ${now})
+  ('sec_theory', 'crs_intro_cp', 'Phần 1: Lý thuyết căn bản & Thuật toán', 1, ${now}),
+  ('sec_quiz', 'crs_intro_cp', 'Phần 2: Kiểm tra kiến thức tổng hợp', 2, ${now}),
+  ('sec_coding', 'crs_intro_cp', 'Phần 3: Luyện tập lập trình trực tuyến', 3, ${now})
 ON CONFLICT(\`id\`) DO UPDATE SET
   \`title\`=excluded.title,
   \`position\`=excluded.position;
 
 -- Items for Course 1
 INSERT INTO \`course_item\` (\`id\`, \`course_id\`, \`section_id\`, \`type\`, \`title\`, \`position\`, \`created_at\`, \`updated_at\`) VALUES
-  ('itm_lesson_intro', 'crs_intro_cp', 'sec_theory', 'lesson', 'Bai 1: Gioi thieu WebAssembly & Moi truong Sandbox', 1, ${now}, ${now}),
-  ('itm_lesson_complexity', 'crs_intro_cp', 'sec_theory', 'lesson', 'Bai 2: Phan tich do phuc tap thoi gian & Bo nho', 2, ${now}, ${now}),
-  ('itm_quiz_comprehensive', 'crs_intro_cp', 'sec_quiz', 'quiz', 'Trac nghiem kien thuc thuat toan (6 dang cau hoi)', 1, ${now}, ${now}),
-  ('itm_ex_python', 'crs_intro_cp', 'sec_coding', 'exercise', 'Thuc hanh Python: Tinh tong day so nguyen', 1, ${now}, ${now}),
-  ('itm_ex_cpp', 'crs_intro_cp', 'sec_coding', 'exercise', 'Thuc hanh C++: Tim Min va Max trong mang', 2, ${now}, ${now}),
-  ('itm_ex_java', 'crs_intro_cp', 'sec_coding', 'exercise', 'Thuc hanh Java: Dem so tu trong van ban', 3, ${now}, ${now})
+  ('itm_lesson_intro', 'crs_intro_cp', 'sec_theory', 'lesson', 'Bài 1: Giới thiệu WebAssembly & Môi trường Sandbox', 1, ${now}, ${now}),
+  ('itm_lesson_complexity', 'crs_intro_cp', 'sec_theory', 'lesson', 'Bài 2: Phân tích độ phức tạp thời gian & Bộ nhớ', 2, ${now}, ${now}),
+  ('itm_quiz_comprehensive', 'crs_intro_cp', 'sec_quiz', 'quiz', 'Trắc nghiệm kiến thức thuật toán (6 dạng câu hỏi)', 1, ${now}, ${now}),
+  ('itm_ex_python', 'crs_intro_cp', 'sec_coding', 'exercise', 'Thực hành Python: Tính tổng dãy số nguyên', 1, ${now}, ${now}),
+  ('itm_ex_cpp', 'crs_intro_cp', 'sec_coding', 'exercise', 'Thực hành C++: Tìm Min và Max trong mảng', 2, ${now}, ${now}),
+  ('itm_ex_java', 'crs_intro_cp', 'sec_coding', 'exercise', 'Thực hành Java: Đếm số từ trong văn bản', 3, ${now}, ${now})
 ON CONFLICT(\`id\`) DO UPDATE SET
   \`title\`=excluded.title,
   \`position\`=excluded.position,
@@ -63,38 +72,38 @@ ON CONFLICT(\`id\`) DO UPDATE SET
 
 -- Lessons Body Content
 INSERT INTO \`lesson\` (\`item_id\`, \`body_md\`) VALUES
-  ('itm_lesson_intro', '${escapeSql(`# Chao mung den voi CSET Learning
+  ('itm_lesson_intro', '${escapeSql(`# Chào mừng đến với CSET Learning
 
-CSET Learning la nen tang hoc tap truc tuyen duoc thiet ke boi **CLB Khoa hoc & Ky thuat CSET (THPT Chuyen Ben Tre)**.
+CSET Learning là nền tảng học tập trực tuyến được thiết kế và vận hành bởi **CLB Khoa học & Kỹ thuật CSET (Trường THPT Chuyên Bến Tre)**.
 
-## 1. Kien truc Thuc thi Code Client-Side
+## 1. Kiến trúc Thực thi Mã nguồn Client-Side
 
-He thong ap dung kien truc WebAssembly (Wasm) hoan toan tai phia trinh duyet:
-- **Python 3.14**: Chay qua engine **Pyodide** bien dich sang Wasm.
-- **C++20**: Su dung bo bien dich **Clang 22 + LLD** dong goi trong WebAssembly qua WASI Preview 1.
-- **Java 23**: Chay qua may ao **TraceJVM (OpenJDK 23)** thuc thi bytecode truc tiep tren trinh duyet.
+Hệ thống áp dụng công nghệ **WebAssembly (Wasm)** hoàn toàn tại trình duyệt của học viên:
+- **Python 3.14**: Chạy trực tiếp qua engine **Pyodide** biên dịch sang Wasm.
+- **C++20**: Sử dụng bộ biên dịch **Clang 22 + LLD** đóng gói trong WebAssembly thông qua giao chuẩn WASI Preview 1.
+- **Java 23**: Chạy qua máy ảo **TraceJVM (OpenJDK 23)** thực thi bytecode chuẩn ngay trên tab trình duyệt.
 
-> **Uu diem**: Toc do phan hoi tuc thi, khong phu thuoc may chu cham diem, hoat dong ngay ca khi ket noi mang cham sau khi da tai xong bo runtime.
+> **Ưu điểm vượt trội**: Tốc độ phản hồi tức thì, không làm nghẽn máy chủ chấm bài, bảo mật tuyệt đối và có thể chạy bài tập ngay cả khi đường truyền mạng chậm sau khi đã tải xong bộ tài nguyên runtime.
 
-## 2. Toan hoc trong Tin hoc
+## 2. Ứng dụng Toán học trong Tin học
 
-Cong thuc tinh tong day so tu nhien tu $1$ den $N$:
+Công thức tính tổng dãy số tự nhiên liên tiếp từ $1$ đến $N$:
 $$\\sum_{i=1}^{N} i = \\frac{N(N+1)}{2}$$
 
-Dinh ly Master (Master Theorem) trong giai thuat de quy:
+Định lý Thạc sĩ (**Master Theorem**) trong việc đánh giá độ phức tạp giải thuật đệ quy:
 $$T(N) = aT\\left(\\frac{N}{b}\\right) + O(N^d)$$
 
-Voi truong hop $a = 2, b = 2, d = 1$:
+Xét trường hợp phân rã chia đôi kinh điển $a = 2, b = 2, d = 1$:
 $$T(N) = 2T\\left(\\frac{N}{2}\\right) + O(N) \\implies O(N \\log N)$$
 
-## 3. Cu phap Co ban cac Ngon ngu
+## 3. Cú pháp Mẫu trên Nền tảng
 
 \`\`\`python
 # Python 3
 import sys
 
 def main():
-    print("Hello from CSET Python!")
+    print("Xin chào từ CSET Learning Python!")
 
 if __name__ == "__main__":
     main()
@@ -108,31 +117,31 @@ using namespace std;
 int main() {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
-    cout << "Hello from CSET C++!" << "\\n";
+    cout << "Xin chào từ CSET Learning C++!" << "\\n";
     return 0;
 }
 \`\`\`
 `)}'),
-  ('itm_lesson_complexity', '${escapeSql(`# Phan tich Do phuc tap Thuat toan
+  ('itm_lesson_complexity', '${escapeSql(`# Phân tích Độ phức tạp Thuật toán
 
-Trong lap trinh thi dau, do phuc tap thoi gian (Time Complexity) quyet dinh chuong trinh co vuot qua gioi han thoi gian (Time Limit Exceeded - TLE) hay khong.
+Trong lập trình thi đấu và khoa học máy tính, **độ phức tạp thời gian** (Time Complexity) và **bộ nhớ** (Space Complexity) quyết định chương trình có vượt qua bài kiểm thử với giới hạn thời gian (Time Limit Exceeded - TLE) hay không.
 
-## 1. Quy tac uoc luong so phep tinh
+## 1. Quy tắc ước lượng số phép tính
 
-Moi giay trinh duyet / may chu thuc hien duoc khoang $10^8$ phep tinh co ban.
+Thông thường, trình duyệt hoặc máy chủ thi đấu tiêu chuẩn thực hiện được khoảng **$10^8$ phép tính cơ bản** trong thời gian $1$ giây.
 
-| Kich thuoc $N$ | Do phuc tap toi da cho phep | Giai thuat tieu bieu |
+| Kích thước dữ liệu $N$ | Độ phức tạp tối đa cho phép | Giải thuật tiêu biểu |
 |---|---|---|
-| $N \\le 10$ | $O(N!)$ hoac $O(2^N \\cdot N^2)$ | Quay lui toan bo, Nhanh can |
-| $N \\le 20$ | $O(2^N)$ | Duyet bitmask, Quy hoach dong trang thai |
-| $N \\le 100$ | $O(N^4)$ | Quy hoach dong 4 chieu |
-| $N \\le 500$ | $O(N^3)$ | Floyd-Warshall, Nhan ma tran |
-| $N \\le 5000$ | $O(N^2)$ | Thuat toan sap xep co ban, 2 con tro long nhau |
-| $N \\le 10^5$ | $O(N \\log N)$ | Merge Sort, Quick Sort, Segment Tree, Binary Search |
-| $N \\le 10^7$ | $O(N)$ | Mang cong don, Sang nguyen to Eratosthenes |
-| $N > 10^9$ | $O(\\log N)$ hoac $O(1)$ | Luy thua nhi phan, Cong thuc toan hoc |
+| $N \\le 10$ | $O(N!)$ hoặc $O(2^N \\cdot N^2)$ | Quay lui vét cạn toàn bộ, Nhánh cận |
+| $N \\le 20$ | $O(2^N)$ | Duyệt tập hợp con, Quy hoạch động trạng thái (Bitmask DP) |
+| $N \\le 100$ | $O(N^4)$ | Quy hoạch động 4 chiều, Đồ thị dày |
+| $N \\le 500$ | $O(N^3)$ | Thuật toán Floyd-Warshall, Nhân ma trận |
+| $N \\le 5000$ | $O(N^2)$ | Thuật toán sắp xếp cơ bản, Kỹ thuật 2 con trỏ lồng nhau |
+| $N \\le 10^5$ | $O(N \\log N)$ | Merge Sort, Quick Sort, Segment Tree, Tìm kiếm nhị phân |
+| $N \\le 10^7$ | $O(N)$ | Mảng cộng dồn, Sàng nguyên tố Eratosthenes, Two Pointers |
+| $N > 10^9$ | $O(\\log N)$ hoặc $O(1)$ | Lũy thừa nhị phân, Công thức toán học trực tiếp |
 
-## 2. So sanh cac lop do phuc tap
+## 2. Thứ tự các lớp độ phức tạp tăng dần
 
 $$O(1) < O(\\log N) < O(\\sqrt{N}) < O(N) < O(N \\log N) < O(N^2) < O(2^N) < O(N!)$$
 `)}')
@@ -146,60 +155,60 @@ ON CONFLICT(\`item_id\`) DO UPDATE SET
   \`pass_percent\`=excluded.pass_percent,
   \`max_attempts\`=excluded.max_attempts;
 
--- Quiz Questions (6 different kinds)
+-- Quiz Questions (6 distinct question kinds with full accented Vietnamese)
 INSERT INTO \`quiz_question\` (\`id\`, \`item_id\`, \`position\`, \`kind\`, \`prompt_md\`, \`points\`, \`config\`, \`answer_key\`, \`explanation_md\`, \`created_at\`, \`updated_at\`) VALUES
   -- 1. Single Choice
   ('q_sc', 'itm_quiz_comprehensive', 1, 'single_choice',
-   'Do phuc tap thoi gian trung binh cua thuat toan Tim kiem nhi phan (Binary Search) tren mang da sap xep la gi?',
+   'Độ phức tạp thời gian trong trường hợp trung bình của thuật toán Tìm kiếm nhị phân (Binary Search) trên mảng đã sắp xếp là gì?',
    1,
    '{"options":[{"id":"opt_a","text":"O(1)"},{"id":"opt_b","text":"O(log N)"},{"id":"opt_c","text":"O(N)"},{"id":"opt_d","text":"O(N log N)"}]}',
    '{"correctOptionId":"opt_b"}',
-   'Tim kiem nhi phan chia doi khong gian tim kiem sau moi buoc so sanh, do do so buoc toi da la log2(N).',
+   'Tìm kiếm nhị phân chia đôi không gian tìm kiếm sau mỗi bước so sánh, do đó số bước tối đa là log2(N).',
    ${now}, ${now}),
 
   -- 2. Multiple Choice
   ('q_mc', 'itm_quiz_comprehensive', 2, 'multiple_choice',
-   'Nhung cau truc du lieu nao sau day trong thu vien chuan C++ STL ho tro thao tac chen va xoa phan tu o ca hai dau voi thoi gian $O(1)$?',
+   'Những cấu trúc dữ liệu nào sau đây trong thư viện chuẩn C++ STL hỗ trợ thao tác chèn và xóa phần tử ở cả hai đầu với thời gian $O(1)$?',
    1,
    '{"options":[{"id":"mc_a","text":"std::deque"},{"id":"mc_b","text":"std::vector"},{"id":"mc_c","text":"std::list"},{"id":"mc_d","text":"std::priority_queue"}]}',
    '{"correctOptionIds":["mc_a","mc_c"]}',
-   'std::deque (double-ended queue) va std::list (doubly-linked list) deu ho tro push_front, pop_front, push_back, pop_back trong O(1). std::vector chi ho tro O(1) o duoi (back).',
+   'std::deque (hàng đợi hai đầu) và std::list (danh sách liên kết đôi) đều hỗ trợ push_front, pop_front, push_back, pop_back trong O(1). std::vector chỉ hỗ trợ O(1) ở đuôi (back).',
    ${now}, ${now}),
 
   -- 3. True / False
   ('q_tf', 'itm_quiz_comprehensive', 3, 'true_false',
-   'Trong Python 3, danh sach (list) duoc cai dat duoi dang mang dong (dynamic array) va thao tac \`list.append()\` co do phuc tap thoi gian trung binh (amortized) la $O(1)$.',
+   'Trong Python 3, danh sách (list) được lưu trữ dưới dạng mảng động (dynamic array) và thao tác \`list.append()\` có độ phức tạp thời gian trung bình (amortized) là $O(1)$.',
    1,
    '{}',
    '{"correct":true}',
-   'Dung. Khi mang day, Python cap phat them bo nho voi he so tang truong nhat dinh. Do do phep append trung binh la O(1).',
+   'Đúng. Khi mảng đầy, Python cấp phát thêm bộ nhớ với hệ số tăng trưởng định sẵn. Do đó chi phí bổ sung trung bình là O(1).',
    ${now}, ${now}),
 
   -- 4. Short Answer
   ('q_sa', 'itm_quiz_comprehensive', 4, 'short_answer',
-   'Ten cau truc du lieu hoat dong theo nguyen ly "Vao truoc, ra truoc" (First-In, First-Out - FIFO) trong tieng Anh la gi?',
+   'Tên cấu trúc dữ liệu hoạt động theo nguyên lý "Vào trước, ra trước" (First-In, First-Out - FIFO) trong tiếng Anh là gì?',
    1,
    '{}',
-   '{"accepted":["queue","Queue","QUEUE","hang doi","Hang doi"],"caseSensitive":false}',
-   'Queue (Hang doi) hoat dong theo nguyen ly FIFO, nguoc voi Stack (Ngan xep) hoat dong theo LIFO.',
+   '{"accepted":["queue","Queue","QUEUE","hàng đợi","Hàng đợi"],"caseSensitive":false}',
+   'Queue (Hàng đợi) hoạt động theo nguyên lý FIFO, ngược với Stack (Ngăn xếp) hoạt động theo LIFO.',
    ${now}, ${now}),
 
   -- 5. Numeric with tolerance
   ('q_num', 'itm_quiz_comprehensive', 5, 'numeric',
-   'Cho day so Fibonacci voi $F_1 = 1, F_2 = 1, F_n = F_{n-1} + F_{n-2}$. Gia tri cua so Fibonacci thu 10 ($F_{10}$) la bao nhieu?',
+   'Cho dãy số Fibonacci với $F_1 = 1, F_2 = 1, F_n = F_{n-1} + F_{n-2}$. Giá trị của số Fibonacci thứ 10 ($F_{10}$) là bao nhiêu?',
    1,
-   '{"unit":"phan tu"}',
+   '{"unit":"giá trị"}',
    '{"value":55,"tolerance":0}',
-   'Cac so Fibonacci dau tien: 1, 1, 2, 3, 5, 8, 13, 21, 34, 55. Do do F(10) = 55.',
+   'Các số Fibonacci đầu tiên: 1, 1, 2, 3, 5, 8, 13, 21, 34, 55. Do đó F(10) = 55.',
    ${now}, ${now}),
 
   -- 6. Matching
   ('q_mat', 'itm_quiz_comprehensive', 6, 'matching',
-   'Ghep noi moi thuat toan sau day voi do phuc tap thoi gian trong truong hop xau nhat (Worst-Case Time Complexity):',
+   'Hãy ghép nối mỗi thuật toán sau đây với độ phức tạp thời gian trong trường hợp xấu nhất (Worst-Case Time Complexity):',
    1,
    '{"left":[{"id":"l1","text":"Merge Sort"},{"id":"l2","text":"Quick Sort"},{"id":"l3","text":"Bubble Sort"},{"id":"l4","text":"Linear Search"}],"right":[{"id":"r1","text":"O(N log N)"},{"id":"r2","text":"O(N^2)"},{"id":"r3","text":"O(N)"},{"id":"r4","text":"O(1)"}]}',
    '{"pairs":{"l1":"r1","l2":"r2","l3":"r2","l4":"r3"}}',
-   'Merge Sort luon la O(N log N). Quick Sort truong hop xau nhat (pivot toi te) la O(N^2). Bubble Sort xau nhat la O(N^2). Linear Search xau nhat la O(N).',
+   'Merge Sort luôn là O(N log N). Quick Sort trường hợp xấu nhất (chọn pivot tồi) là O(N^2). Bubble Sort xấu nhất là O(N^2). Linear Search xấu nhất là O(N).',
    ${now}, ${now})
 ON CONFLICT(\`id\`) DO UPDATE SET
   \`prompt_md\`=excluded.prompt_md,
@@ -212,8 +221,8 @@ ON CONFLICT(\`id\`) DO UPDATE SET
 -- Exercise 1: Python
 INSERT INTO \`exercise\` (\`item_id\`, \`language\`, \`prompt_md\`, \`starter_code\`, \`time_limit_ms\`) VALUES
   ('itm_ex_python', 'python',
-   'Cho mot day so nguyen gom $N$ phan tu. Hay tinh tong cua tat ca cac so trong day.\n\n### Dau vao\n- Dong dau tien chua so nguyen $N$ ($1 \\le N \\le 10^5$).\n- Dong thu hai chua $N$ so nguyen $A_1, A_2, \\dots, A_N$ ($-10^9 \\le A_i \\le 10^9$).\n\n### Dau ra\n- In ra mot so nguyen duy nhat la tong cac phan tu.',
-   'import sys\n\ndef main():\n    data = sys.stdin.read().split()\n    if not data:\n        return\n    n = int(data[0])\n    # Doc danh sach n so nguyen va tinh tong\n    nums = [int(x) for x in data[1:n+1]]\n    print(sum(nums))\n\nif __name__ == "__main__":\n    main()\n',
+   'Cho một dãy số nguyên gồm $N$ phần tử. Hãy tính tổng của tất cả các số trong dãy.\n\n### Đầu vào\n- Dòng đầu tiên chứa số nguyên $N$ ($1 \\le N \\le 10^5$).\n- Dòng thứ hai chứa $N$ số nguyên $A_1, A_2, \\dots, A_N$ ($-10^9 \\le A_i \\le 10^9$).\n\n### Đầu ra\n- In ra một số nguyên duy nhất là tổng của các phần tử.',
+   'import sys\n\ndef main():\n    data = sys.stdin.read().split()\n    if not data:\n        return\n    n = int(data[0])\n    # Đọc danh sách n số nguyên và tính tổng\n    nums = [int(x) for x in data[1:n+1]]\n    print(sum(nums))\n\nif __name__ == "__main__":\n    main()\n',
    3000)
 ON CONFLICT(\`item_id\`) DO UPDATE SET
   \`language\`=excluded.language,
@@ -233,7 +242,7 @@ ON CONFLICT(\`id\`) DO UPDATE SET
 -- Exercise 2: C++
 INSERT INTO \`exercise\` (\`item_id\`, \`language\`, \`prompt_md\`, \`starter_code\`, \`time_limit_ms\`) VALUES
   ('itm_ex_cpp', 'cpp',
-   'Cho mang gom $N$ so nguyen. Hay tim gia tri nho nhat (Min) va gia tri lon nhat (Max) trong mang.\n\n### Dau vao\n- Dong dau tien chua so $N$ ($1 \\le N \\le 10^5$).\n- Dong thu hai chua $N$ so nguyen cach nhau boi dau cach.\n\n### Dau ra\n- In ra hai so nguyen cach nhau mot dau cach: \`min_val max_val\`.',
+   'Cho mảng gồm $N$ số nguyên. Hãy tìm giá trị nhỏ nhất (Min) và giá trị lớn nhất (Max) trong mảng.\n\n### Đầu vào\n- Dòng đầu tiên chứa số $N$ ($1 \\le N \\le 10^5$).\n- Dòng thứ hai chứa $N$ số nguyên cách nhau bởi dấu cách.\n\n### Đầu ra\n- In ra hai số nguyên cách nhau một dấu cách: \`min_val max_val\`.',
    '#include <bits/stdc++.h>\nusing namespace std;\n\nint main() {\n    ios_base::sync_with_stdio(false);\n    cin.tie(NULL);\n\n    int n;\n    if (!(cin >> n)) return 0;\n    int min_val = INT_MAX, max_val = INT_MIN;\n    for (int i = 0; i < n; i++) {\n        int x;\n        cin >> x;\n        min_val = min(min_val, x);\n        max_val = max(max_val, x);\n    }\n    cout << min_val << " " << max_val << "\\n";\n    return 0;\n}\n',
    3000)
 ON CONFLICT(\`item_id\`) DO UPDATE SET
@@ -254,7 +263,7 @@ ON CONFLICT(\`id\`) DO UPDATE SET
 -- Exercise 3: Java
 INSERT INTO \`exercise\` (\`item_id\`, \`language\`, \`prompt_md\`, \`starter_code\`, \`time_limit_ms\`) VALUES
   ('itm_ex_java', 'java',
-   'Doc mot dong van ban va dem so luong tu (cac tu duoc ngan cach boi mot hoac nhieu khoang trang).\n\n### Dau vao\n- Mot dong van ban gom cac ky tu chu va so.\n\n### Dau ra\n- In ra mot so nguyen duy nhat la so luong tu trong dong do.',
+   'Đọc một dòng văn bản và đếm số lượng từ (các từ được ngăn cách bởi một hoặc nhiều khoảng trắng).\n\n### Đầu vào\n- Một dòng văn bản gồm các ký tự chữ và số.\n\n### Đầu ra\n- In ra một số nguyên duy nhất là số lượng từ trong dòng đó.',
    'import java.util.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner scanner = new Scanner(System.in);\n        if (!scanner.hasNextLine()) {\n            System.out.println(0);\n            return;\n        }\n        String line = scanner.nextLine().trim();\n        if (line.isEmpty()) {\n            System.out.println(0);\n            return;\n        }\n        String[] words = line.split("\\\\s+");\n        System.out.println(words.length);\n    }\n}\n',
    4000)
 ON CONFLICT(\`item_id\`) DO UPDATE SET
@@ -271,42 +280,128 @@ ON CONFLICT(\`id\`) DO UPDATE SET
   \`stdin\`=excluded.stdin,
   \`expected_stdout\`=excluded.expected_stdout;
 
--- 3. Course 2: Draft Advanced Course (to test Instructor draft preview & outline editing)
-INSERT INTO \`course\` (\`id\`, \`slug\`, \`title\`, \`summary\`, \`status\`, \`owner_id\`, \`created_at\`, \`updated_at\`) VALUES
-  ('crs_advanced_algo', 'cau-truc-du-lieu-thuat-toan-nang-cao', 'Cau truc Du lieu & Thuat toan Nang cao', 'Khoa hoc chuyen sau danh cho doi tuyen HSG: Segment Tree, Fenwick Tree, Heavy-Light Decomposition va Quy hoach dong trang thai.', 'draft', 'usr_instructor', ${now}, ${now})
+-- 3. Course 2: Cấu trúc Dữ liệu & Giải thuật nâng cao (Published)
+INSERT INTO \`course\` (\`id\`, \`slug\`, \`title\`, \`summary\`, \`cover_image_url\`, \`status\`, \`owner_id\`, \`created_at\`, \`updated_at\`) VALUES
+  ('crs_advanced_algo', 'cau-truc-du-lieu-thuat-toan-nang-cao',
+   'Cấu trúc Dữ liệu & Giải thuật nâng cao',
+   'Khóa học chuyên sâu dành cho đội tuyển HSG Tin học: Cây phân đoạn (Segment Tree), Fenwick Tree, Quy hoạch động trạng thái và Đồ thị nâng cao.',
+   'https://images.unsplash.com/photo-1509228468518-180dd4864904?w=1200&q=80&auto=format&fit=crop',
+   'published', 'usr_instructor', ${now}, ${now})
 ON CONFLICT(\`id\`) DO UPDATE SET
   \`title\`=excluded.title,
   \`summary\`=excluded.summary,
+  \`cover_image_url\`=excluded.cover_image_url,
   \`status\`=excluded.status,
   \`updated_at\`=excluded.updated_at;
 
 INSERT INTO \`course_section\` (\`id\`, \`course_id\`, \`title\`, \`position\`, \`created_at\`) VALUES
-  ('sec_adv_tree', 'crs_advanced_algo', 'Chuyen de Cay phan doan (Segment Tree)', 1, ${now})
+  ('sec_adv_tree', 'crs_advanced_algo', 'Chuyên đề Cây phân đoạn (Segment Tree)', 1, ${now})
 ON CONFLICT(\`id\`) DO UPDATE SET
   \`title\`=excluded.title,
   \`position\`=excluded.position;
 
 INSERT INTO \`course_item\` (\`id\`, \`course_id\`, \`section_id\`, \`type\`, \`title\`, \`position\`, \`created_at\`, \`updated_at\`) VALUES
-  ('itm_lesson_segtree', 'crs_advanced_algo', 'sec_adv_tree', 'lesson', 'Ly thuyet: Point Update & Range Sum Query', 1, ${now}, ${now})
+  ('itm_lesson_segtree', 'crs_advanced_algo', 'sec_adv_tree', 'lesson', 'Lý thuyết: Point Update & Range Sum Query', 1, ${now}, ${now})
 ON CONFLICT(\`id\`) DO UPDATE SET
   \`title\`=excluded.title,
   \`position\`=excluded.position,
   \`updated_at\`=excluded.updated_at;
 
 INSERT INTO \`lesson\` (\`item_id\`, \`body_md\`) VALUES
-  ('itm_lesson_segtree', '${escapeSql(`# Segment Tree (Cay Phan Doan)
+  ('itm_lesson_segtree', '${escapeSql(`# Segment Tree (Cây Phân Đoạn)
 
-Segment Tree la cau truc du lieu cay nhi phan dung de tra cuu va cap nhat doan trong thoi gian $O(\\log N)$.
+Segment Tree là cấu trúc dữ liệu cây nhị phân dùng để tra cứu và cập nhật các hàm kết hợp (tổng, min, max, gcd) trên đoạn trong thời gian $O(\\log N)$.
 
-## Do phuc tap
-- Xay dung cay (Build): $O(N)$
-- Cap nhat diem (Point Update): $O(\\log N)$
-- Truy van doan (Range Query): $O(\\log N)$
+## 1. Độ phức tạp
+- Xây dựng cây (Build): $O(N)$
+- Cập nhật điểm (Point Update): $O(\\log N)$
+- Truy vấn đoạn (Range Query): $O(\\log N)$
 `)}')
 ON CONFLICT(\`item_id\`) DO UPDATE SET
   \`body_md\`=excluded.body_md;
 
--- 4. Enroll Student in Course 1 and complete Lesson 1
+-- 4. Course 3: Lập trình Web Hiện đại với SvelteKit & Cloudflare (Published)
+INSERT INTO \`course\` (\`id\`, \`slug\`, \`title\`, \`summary\`, \`cover_image_url\`, \`status\`, \`owner_id\`, \`created_at\`, \`updated_at\`) VALUES
+  ('crs_web_modern', 'lap-trinh-web-sveltekit-cloudflare',
+   'Lập trình Web Hiện đại với SvelteKit & Cloudflare',
+   'Xây dựng ứng dụng full-stack hiện đại với Svelte 5 Runes, Tailwind CSS v4, cơ sở dữ liệu phân tán Cloudflare D1 và Object Storage R2.',
+   'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1200&q=80&auto=format&fit=crop',
+   'published', 'usr_admin', ${now}, ${now})
+ON CONFLICT(\`id\`) DO UPDATE SET
+  \`title\`=excluded.title,
+  \`summary\`=excluded.summary,
+  \`cover_image_url\`=excluded.cover_image_url,
+  \`status\`=excluded.status,
+  \`updated_at\`=excluded.updated_at;
+
+INSERT INTO \`course_section\` (\`id\`, \`course_id\`, \`title\`, \`position\`, \`created_at\`) VALUES
+  ('sec_web_core', 'crs_web_modern', 'Chương 1: Kiến trúc Edge Computing & Svelte 5', 1, ${now})
+ON CONFLICT(\`id\`) DO UPDATE SET
+  \`title\`=excluded.title,
+  \`position\`=excluded.position;
+
+INSERT INTO \`course_item\` (\`id\`, \`course_id\`, \`section_id\`, \`type\`, \`title\`, \`position\`, \`created_at\`, \`updated_at\`) VALUES
+  ('itm_lesson_svelte5', 'crs_web_modern', 'sec_web_core', 'lesson', 'Bài 1: Svelte 5 Runes cơ bản ($state, $derived, $effect)', 1, ${now}, ${now})
+ON CONFLICT(\`id\`) DO UPDATE SET
+  \`title\`=excluded.title,
+  \`position\`=excluded.position,
+  \`updated_at\`=excluded.updated_at;
+
+INSERT INTO \`lesson\` (\`item_id\`, \`body_md\`) VALUES
+  ('itm_lesson_svelte5', '${escapeSql(`# Svelte 5 Runes Cơ Bản
+
+Svelte 5 giới thiệu hệ thống phản ứng (Reactivity) thế hệ mới thông qua **Runes**:
+
+- \`$state\`: Khai báo trạng thái phản ứng.
+- \`$derived\`: Tính toán giá trị phái sinh tự động.
+- \`$effect\`: Chạy side-effect sau khi DOM cập nhật.
+- \`$props\`: Khai báo props đầu vào có kiểu TypeScript tường minh.
+`)}')
+ON CONFLICT(\`item_id\`) DO UPDATE SET
+  \`body_md\`=excluded.body_md;
+
+-- 5. Course 4: Mật mã học & An toàn Thông tin (CTF Basics) (Draft)
+INSERT INTO \`course\` (\`id\`, \`slug\`, \`title\`, \`summary\`, \`cover_image_url\`, \`status\`, \`owner_id\`, \`created_at\`, \`updated_at\`) VALUES
+  ('crs_ctf_basics', 'mat-ma-hoc-an-toan-thong-tin',
+   'Mật mã học & An toàn Thông tin (CTF Basics)',
+   'Khóa học nhập môn an toàn thông tin và giải đề CTF (Capture The Flag): mã hóa cổ điển, mã hóa khóa công khai RSA và phân tích lỗ hổng web.',
+   'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1200&q=80&auto=format&fit=crop',
+   'draft', 'usr_instructor', ${now}, ${now})
+ON CONFLICT(\`id\`) DO UPDATE SET
+  \`title\`=excluded.title,
+  \`summary\`=excluded.summary,
+  \`cover_image_url\`=excluded.cover_image_url,
+  \`status\`=excluded.status,
+  \`updated_at\`=excluded.updated_at;
+
+INSERT INTO \`course_section\` (\`id\`, \`course_id\`, \`title\`, \`position\`, \`created_at\`) VALUES
+  ('sec_crypto_intro', 'crs_ctf_basics', 'Chương 1: Mật mã học cổ điển & Phân tích tần suất', 1, ${now})
+ON CONFLICT(\`id\`) DO UPDATE SET
+  \`title\`=excluded.title,
+  \`position\`=excluded.position;
+
+INSERT INTO \`course_item\` (\`id\`, \`course_id\`, \`section_id\`, \`type\`, \`title\`, \`position\`, \`created_at\`, \`updated_at\`) VALUES
+  ('itm_lesson_caesar', 'crs_ctf_basics', 'sec_crypto_intro', 'lesson', 'Bài 1: Mật mã Caesar & Phương pháp vét cạn khóa', 1, ${now}, ${now})
+ON CONFLICT(\`id\`) DO UPDATE SET
+  \`title\`=excluded.title,
+  \`position\`=excluded.position,
+  \`updated_at\`=excluded.updated_at;
+
+INSERT INTO \`lesson\` (\`item_id\`, \`body_md\`) VALUES
+  ('itm_lesson_caesar', '${escapeSql(`# Mật mã Caesar
+
+Mật mã Caesar dịch chuyển mỗi ký tự trong bảng chữ cái đi một khoảng cố định $k$.
+
+Công thức mã hóa:
+$$E_k(x) = (x + k) \\pmod{26}$$
+
+Công thức giải mã:
+$$D_k(y) = (y - k) \\pmod{26}$$
+`)}')
+ON CONFLICT(\`item_id\`) DO UPDATE SET
+  \`body_md\`=excluded.body_md;
+
+-- 6. Enroll Student in Course 1 and complete Lesson 1
 INSERT INTO \`enrollment\` (\`user_id\`, \`course_id\`, \`enrolled_at\`) VALUES
   ('usr_student', 'crs_intro_cp', ${now})
 ON CONFLICT(\`user_id\`, \`course_id\`) DO NOTHING;
@@ -317,4 +412,4 @@ ON CONFLICT(\`user_id\`, \`item_id\`) DO NOTHING;
 `;
 
 writeFileSync('scripts/seed-local.sql', sql.trim() + '\n');
-console.log('Successfully generated scripts/seed-local.sql');
+console.log('Successfully generated scripts/seed-local.sql with full Vietnamese diacritics and cover images');

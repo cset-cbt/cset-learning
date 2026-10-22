@@ -39,6 +39,7 @@ export const coursesEn: Record<keyof typeof coursesVi, string> = {
   'manage.courseEyebrow': 'EDIT COURSE',
   'manage.courseDescription': 'Configure, publish and manage course content.',
   'manage.courseSlug': 'Course URL slug',
+  'manage.courseCoverImage': 'Course cover image (URL)',
   'manage.settingsTitle': 'Course settings',
   'manage.publish': 'Publish',
   'manage.unpublish': 'Return to draft',

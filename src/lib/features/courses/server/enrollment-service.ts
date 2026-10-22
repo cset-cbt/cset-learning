@@ -12,6 +12,7 @@ export interface CatalogCourse {
   slug: string;
   title: string;
   summary: string;
+  coverImageUrl: string | null;
   itemCount: number;
   completedCount: number;
   enrolled: boolean;
@@ -24,6 +25,7 @@ export async function listCatalog(db: LearningDb, userId: string): Promise<Catal
       slug: course.slug,
       title: course.title,
       summary: course.summary,
+      coverImageUrl: course.coverImageUrl,
       itemCount: count(courseItem.id),
       completedCount: count(itemProgress.itemId),
       enrolled: sql<number>`CASE WHEN COUNT(${enrollment.userId}) > 0 THEN 1 ELSE 0 END`

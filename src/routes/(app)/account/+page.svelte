@@ -1,6 +1,9 @@
 <script lang="ts">
   import { invalidateAll } from '$app/navigation';
-  import { Button, Card, FormMessage, InputField, PageHeader, toast } from 'cset-ui';
+  import { Button, Card, FormMessage, InputField, toast } from 'cset-ui';
+  import AvatarCard from '$lib/core/shell/avatar-card.svelte';
+  import ProfileHero from '$lib/core/shell/profile-hero.svelte';
+  import PrivilegesCard from '$lib/core/shell/privileges-card.svelte';
   import { authClient } from '$lib/core/auth/auth-client';
   import { mapAuthError } from '$lib/core/auth/auth-errors';
   import { eventValue } from '$lib/core/forms/event-value';
@@ -49,64 +52,87 @@
   }
 </script>
 
-<div class="w-full max-w-5xl space-y-6">
-  <PageHeader eyebrow={$t('account.eyebrow')} title={$t('account.title')}>
-    {$t('account.description')}
-  </PageHeader>
+<div class="w-full space-y-8">
+  <ProfileHero user={data.user} />
 
-  <Card class="space-y-4 p-6">
-    <h2 class="text-lg font-bold text-ink">{$t('account.profile.title')}</h2>
-    <dl class="mono-label grid gap-1 text-xs text-ink-muted">
-      <div class="flex gap-3">
-        <dt>{$t('account.email')}</dt>
-        <dd class="text-ink normal-case">{data.user.email}</dd>
-      </div>
-      <div class="flex gap-3">
-        <dt>{$t('account.role')}</dt>
-        <dd class="text-ink normal-case">{$t(`account.role.${data.user.role}`)}</dd>
-      </div>
-    </dl>
-    <form class="space-y-4" onsubmit={saveProfile}>
-      <InputField
-        label={$t('account.profile.name')}
-        name="name"
-        autocomplete="name"
-        required
-        maxlength={120}
-        value={name}
-        oninput={(event: Event) => (name = eventValue(event))}
-      />
-      <Button type="submit" disabled={profileBusy}>{$t('account.profile.save')}</Button>
-    </form>
-  </Card>
+  <div class="grid w-full gap-6 lg:grid-cols-12">
+    <!-- Left Column: Avatar & Personal Information -->
+    <div class="space-y-6 lg:col-span-6">
+      <AvatarCard user={data.user} />
 
-  <Card class="space-y-4 p-6">
-    <h2 class="text-lg font-bold text-ink">{$t('account.password.title')}</h2>
-    <form class="space-y-4" onsubmit={changePassword}>
-      <InputField
-        label={$t('account.password.current')}
-        name="currentPassword"
-        type="password"
-        autocomplete="current-password"
-        required
-        value={currentPassword}
-        oninput={(event: Event) => (currentPassword = eventValue(event))}
-      />
-      <InputField
-        label={$t('account.password.new')}
-        name="newPassword"
-        type="password"
-        autocomplete="new-password"
-        required
-        minlength={8}
-        maxlength={128}
-        value={newPassword}
-        oninput={(event: Event) => (newPassword = eventValue(event))}
-      />
-      {#if passwordError}
-        <FormMessage variant="error">{$t(passwordError)}</FormMessage>
-      {/if}
-      <Button type="submit" disabled={passwordBusy}>{$t('account.password.save')}</Button>
-    </form>
-  </Card>
+      <Card class="space-y-5 p-6">
+        <div>
+          <h2 class="text-lg font-bold text-ink">{$t('account.profile.title')}</h2>
+          <p class="mt-1 text-sm text-ink-muted">{$t('account.description')}</p>
+        </div>
+
+        <dl class="mono-label grid gap-2 text-xs text-ink-muted border-t border-b border-border py-3">
+          <div class="flex items-center justify-between">
+            <dt>{$t('account.email')}</dt>
+            <dd class="text-ink normal-case font-mono font-semibold">{data.user.email}</dd>
+          </div>
+          <div class="flex items-center justify-between">
+            <dt>{$t('account.role')}</dt>
+            <dd class="text-ink normal-case font-sans font-semibold">
+              {$t(`account.role.${data.user.role}`)}
+            </dd>
+          </div>
+        </dl>
+
+        <form class="space-y-4" onsubmit={saveProfile}>
+          <InputField
+            label={$t('account.profile.name')}
+            name="name"
+            autocomplete="name"
+            required
+            maxlength={120}
+            value={name}
+            oninput={(event: Event) => (name = eventValue(event))}
+          />
+          <Button type="submit" disabled={profileBusy}>{$t('account.profile.save')}</Button>
+        </form>
+      </Card>
+    </div>
+
+    <!-- Right Column: Security/Password & Account Privileges -->
+    <div class="space-y-6 lg:col-span-6">
+      <Card class="space-y-5 p-6">
+        <div>
+          <h2 class="text-lg font-bold text-ink">{$t('account.password.title')}</h2>
+          <p class="mt-1 text-sm text-ink-muted leading-relaxed">
+            {$t('account.password.sessionsNote')}
+          </p>
+        </div>
+
+        <form class="space-y-4" onsubmit={changePassword}>
+          <InputField
+            label={$t('account.password.current')}
+            name="currentPassword"
+            type="password"
+            autocomplete="current-password"
+            required
+            value={currentPassword}
+            oninput={(event: Event) => (currentPassword = eventValue(event))}
+          />
+          <InputField
+            label={$t('account.password.new')}
+            name="newPassword"
+            type="password"
+            autocomplete="new-password"
+            required
+            minlength={8}
+            maxlength={128}
+            value={newPassword}
+            oninput={(event: Event) => (newPassword = eventValue(event))}
+          />
+          {#if passwordError}
+            <FormMessage variant="error">{$t(passwordError)}</FormMessage>
+          {/if}
+          <Button type="submit" disabled={passwordBusy}>{$t('account.password.save')}</Button>
+        </form>
+      </Card>
+
+      <PrivilegesCard user={data.user} />
+    </div>
+  </div>
 </div>

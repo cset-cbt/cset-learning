@@ -5,14 +5,18 @@ export const courseFieldsSchema = z
   .object({
     title: z.string().trim().min(1).max(120),
     summary: z.string().max(280),
-    slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/).max(80)
+    slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/).max(80),
+    coverImageUrl: z.string().trim().max(500).optional().nullable()
   })
   .strict();
 
 export const createCourseSchema = z
-  .object({ title: z.string().trim().min(1).max(120), summary: z.string().max(280) })
+  .object({
+    title: z.string().trim().min(1).max(120),
+    summary: z.string().max(280),
+    coverImageUrl: z.string().trim().max(500).optional().nullable()
+  })
   .strict();
-
 export const courseStatusSchema = z.object({ status: z.enum(['draft', 'published']) }).strict();
 export const sectionTitleSchema = z.object({ title: z.string().trim().min(1).max(120) }).strict();
 export const itemTitleSchema = z.object({ title: z.string().trim().min(1).max(120) }).strict();

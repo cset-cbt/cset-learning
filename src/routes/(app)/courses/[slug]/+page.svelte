@@ -11,9 +11,24 @@
 </script>
 
 <div class="space-y-7">
-  <PageHeader eyebrow={$t('courses.courseEyebrow')} title={data.course.title}>
-    {$t('courses.courseDescription')}
-  </PageHeader>
+  {#if data.course.coverImageUrl}
+    <div class="relative h-56 w-full overflow-hidden rounded-sm border border-border bg-surface-muted sm:h-72">
+      <img
+        src={data.course.coverImageUrl}
+        alt={data.course.title}
+        class="h-full w-full object-cover"
+      />
+      <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+      <div class="absolute bottom-5 left-5 right-5 sm:bottom-6 sm:left-6 sm:right-6">
+        <p class="mono-label text-xs uppercase tracking-widest text-accent mb-1">CSET // COURSE</p>
+        <h1 class="font-sans text-2xl font-bold text-white sm:text-3xl">{data.course.title}</h1>
+      </div>
+    </div>
+  {:else}
+    <PageHeader eyebrow={$t('courses.courseEyebrow')} title={data.course.title}>
+      {$t('courses.courseDescription')}
+    </PageHeader>
+  {/if}
   <div class="flex flex-wrap items-center gap-3">
     {#if data.course.status === 'draft'}
       <Badge variant="soft" color="amber">{$t('courses.draftPreview')}</Badge>

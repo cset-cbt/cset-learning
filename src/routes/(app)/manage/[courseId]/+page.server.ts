@@ -53,7 +53,8 @@ export const actions: Actions = {
       const parsed = courseFieldsSchema.safeParse({
         title: form.get('title'),
         summary: form.get('summary'),
-        slug: form.get('slug')
+        slug: form.get('slug'),
+        coverImageUrl: form.get('coverImageUrl') || null
       });
       if (!parsed.success) throw new ValidationError('manage.error.invalidInput');
       await updateCourse(event.locals.runtime.db, actor, event.params.courseId, parsed.data);

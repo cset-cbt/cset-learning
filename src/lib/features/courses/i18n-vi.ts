@@ -38,6 +38,7 @@ export const coursesVi = {
   'manage.courseEyebrow': 'CHỈNH SỬA KHÓA HỌC',
   'manage.courseDescription': 'Cấu hình, xuất bản và quản lý nội dung khóa học.',
   'manage.courseSlug': 'Đường dẫn định danh',
+  'manage.courseCoverImage': 'Ảnh bìa khóa học (URL)',
   'manage.settingsTitle': 'Thông tin khóa học',
   'manage.publish': 'Xuất bản',
   'manage.unpublish': 'Chuyển về bản nháp',

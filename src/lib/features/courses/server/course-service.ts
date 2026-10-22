@@ -12,6 +12,7 @@ export interface ManageCourse {
   slug: string;
   title: string;
   summary: string;
+  coverImageUrl: string | null;
   status: 'draft' | 'published';
   ownerId: string;
   ownerName: string;
@@ -25,6 +26,7 @@ export async function listManageableCourses(db: LearningDb, actor: SessionUser):
       slug: course.slug,
       title: course.title,
       summary: course.summary,
+      coverImageUrl: course.coverImageUrl,
       status: course.status,
       ownerId: course.ownerId,
       ownerName: user.name,
@@ -72,7 +74,7 @@ export async function updateCourse(
   db: LearningDb,
   actor: SessionUser,
   courseId: string,
-  input: { title: string; summary: string; slug: string }
+  input: { title: string; summary: string; slug: string; coverImageUrl?: string | null }
 ): Promise<void> {
   await resolveManagedCourse(db, actor, { courseId });
   try {

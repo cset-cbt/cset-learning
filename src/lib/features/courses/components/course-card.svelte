@@ -8,23 +8,60 @@
   let { course }: { course: CatalogCourse } = $props();
 </script>
 
-<Card class="space-y-4">
-  <div class="flex items-start justify-between gap-4">
-    <h2 class="text-lg font-semibold text-ink">
-      <a class="hover:text-accent" href={resolve('/(app)/courses/[slug]', { slug: course.slug })}>{course.title}</a>
-    </h2>
-    {#if course.enrolled}<Badge variant="soft" color="emerald">{$t('courses.enrolled')}</Badge>{/if}
-  </div>
-  <p class="text-sm text-ink-muted">{course.summary}</p>
-  <div class="space-y-2">
-    <div class="flex justify-between text-xs text-ink-muted">
-      <span>{$t('courses.progress')}</span>
-      <span>{course.completedCount}/{course.itemCount}</span>
+<Card class="group flex flex-col overflow-hidden p-0 transition-all duration-300 hover:border-accent hover:shadow-xl">
+  {#if course.coverImageUrl}
+    <div class="relative aspect-video w-full overflow-hidden border-b border-border bg-surface-muted">
+      <img
+        src={course.coverImageUrl}
+        alt={course.title}
+        class="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+        loading="lazy"
+      />
+      <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
+      {#if course.enrolled}
+        <div class="absolute right-3 top-3">
+          <Badge variant="solid" color="emerald">{$t('courses.enrolled')}</Badge>
+        </div>
+      {/if}
     </div>
-    <ProgressBar
-      value={course.completedCount}
-      max={course.itemCount}
-      label={$t('courses.progressLabel', { completed: course.completedCount, total: course.itemCount })}
-    />
+  {:else}
+    <div class="relative flex aspect-video w-full items-center justify-center border-b border-border bg-surface-muted/60 dot-grid-bg">
+      <div class="mono-label text-xs uppercase tracking-widest text-accent font-bold">
+        CSET // COURSE
+      </div>
+      {#if course.enrolled}
+        <div class="absolute right-3 top-3">
+          <Badge variant="solid" color="emerald">{$t('courses.enrolled')}</Badge>
+        </div>
+      {/if}
+    </div>
+  {/if}
+
+  <div class="flex flex-1 flex-col justify-between space-y-4 p-5 sm:p-6">
+    <div class="space-y-2">
+      <h2 class="font-sans text-lg font-bold leading-snug text-ink">
+        <a
+          class="transition-colors hover:text-accent"
+          href={resolve('/(app)/courses/[slug]', { slug: course.slug })}
+        >
+          {course.title}
+        </a>
+      </h2>
+      <p class="line-clamp-2 text-sm text-ink-muted leading-relaxed">
+        {course.summary}
+      </p>
+    </div>
+
+    <div class="space-y-2 border-t border-border pt-4">
+      <div class="flex justify-between font-mono text-xs text-ink-muted">
+        <span>{$t('courses.progress')}</span>
+        <span class="font-semibold text-ink">{course.completedCount}/{course.itemCount}</span>
+      </div>
+      <ProgressBar
+        value={course.completedCount}
+        max={course.itemCount}
+        label={$t('courses.progressLabel', { completed: course.completedCount, total: course.itemCount })}
+      />
+    </div>
   </div>
 </Card>

@@ -8,6 +8,7 @@ export const course = sqliteTable('course', {
   slug: text('slug').notNull().unique(),
   title: text('title').notNull(),
   summary: text('summary').notNull().default(''),
+  coverImageUrl: text('cover_image_url'),
   status: text('status').$type<CourseStatus>().notNull().default('draft'),
   // Restrict: a user who still owns courses cannot be deleted by accident.
   ownerId: text('owner_id')
