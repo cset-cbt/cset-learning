@@ -18,7 +18,8 @@ export const actions: Actions = {
       const form = await event.request.formData();
       const parsed = createCourseSchema.safeParse({
         title: form.get('title'),
-        summary: form.get('summary') ?? ''
+        summary: form.get('summary') ?? '',
+        coverImageUrl: form.get('coverImageUrl') || null
       });
       if (!parsed.success) throw new ValidationError('manage.error.invalidInput');
       const courseId = await createCourse(event.locals.runtime.db, actor, parsed.data);

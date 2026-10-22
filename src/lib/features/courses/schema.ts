@@ -85,3 +85,20 @@ export const itemProgress = sqliteTable(
   },
   (table) => [primaryKey({ columns: [table.userId, table.itemId] })]
 );
+
+export const courseInstructor = sqliteTable(
+  'course_instructor',
+  {
+    courseId: text('course_id')
+      .notNull()
+      .references(() => course.id, { onDelete: 'cascade' }),
+    userId: text('user_id')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    role: text('role').$type<'lead' | 'instructor' | 'assistant'>().notNull().default('instructor'),
+    assignedAt: integer('assigned_at', { mode: 'timestamp' })
+      .notNull()
+      .$defaultFn(() => new Date())
+  },
+  (table) => [primaryKey({ columns: [table.courseId, table.userId] })]
+);

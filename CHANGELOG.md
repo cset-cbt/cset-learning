@@ -16,3 +16,7 @@ All notable changes to CSET Learning are documented here, following Keep a Chang
 - In-browser code runner executing Python (Pyodide), C++ (Clang WASM) and Java (TraceJVM) inside isolated Web Workers.
 - Administrator portal for user role assignment, password resets, account suspension, and audit logging.
 - Full-width responsive layout and unified form control heights across all views.
+- Redesigned course creation: replaced inline creation card with header "+ Create Course" button and spring-animated modal dialog.
+- Restructured course management into 3 focused tabs: Course Content (Outline), Manage Members (Instructors & Students), and Settings (Metadata & Danger Zone).
+- Cleaned up course outline: eliminated cluttering inline item rename inputs from the syllabus view, replaced with clean badges, direct item links, and an item editor entry point; kept section rename dialog.
+- Implemented course member management: database-backed instructor delegation (`course_instructor` table, migration `0002_busy_skaar.sql`) and student enrollment tracking with live progress bars and unenroll controls.

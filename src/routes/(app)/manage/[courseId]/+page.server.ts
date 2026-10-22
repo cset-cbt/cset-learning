@@ -2,31 +2,18 @@ import { redirect } from '@sveltejs/kit';
 import { resolve } from '$app/paths';
 import { requireStaff } from '$lib/core/auth/guards';
 import { actionFailure, ValidationError } from '$lib/core/errors';
+import { deleteCourse, getManageableCourse, setCourseStatus, updateCourse } from '$lib/features/courses/server/course-service';
 import {
-  deleteCourse,
-  getManageableCourse,
-  setCourseStatus,
-  updateCourse
-} from '$lib/features/courses/server/course-service';
-import {
-  addItem,
-  addSection,
-  deleteItem,
-  deleteSection,
-  getOutline,
-  moveItem,
-  moveSection,
-  renameItem,
-  renameSection
+  addItem, addSection, deleteItem, deleteSection, getOutline,
+  moveItem, moveSection, renameItem, renameSection
 } from '$lib/features/courses/server/outline-service';
+import { listCourseMembers, listEligibleInstructors } from '$lib/features/courses/server/course-members-service';
 import {
-  addItemSchema,
-  courseFieldsSchema,
-  courseStatusSchema,
-  itemTitleSchema,
-  moveSchema,
-  sectionTitleSchema,
-  uuidSchema
+  handleAssignInstructor, handleEnrollStudent, handleRemoveInstructor, handleUnenrollStudent
+} from '$lib/features/courses/server/manage-course-handlers';
+import {
+  addItemSchema, courseFieldsSchema, courseStatusSchema, itemTitleSchema,
+  moveSchema, sectionTitleSchema, uuidSchema
 } from '$lib/features/courses/validation';
 import { rethrowRouteError } from '$lib/features/courses/server/route-errors';
 import type { Actions, PageServerLoad } from './$types';
@@ -34,22 +21,30 @@ import type { Actions, PageServerLoad } from './$types';
 export const load: PageServerLoad = async ({ locals, params, url }) => {
   const actor = requireStaff(locals, url);
   try {
-    const course = await getManageableCourse(locals.runtime.db, actor, params.courseId);
-    return { course, sections: await getOutline(locals.runtime.db, course.id) };
+    const [course, sections, members, eligibleInstructors] = await Promise.all([
+      getManageableCourse(locals.runtime.db, actor, params.courseId),
+      getOutline(locals.runtime.db, params.courseId),
+      listCourseMembers(locals.runtime.db, actor, params.courseId),
+      listEligibleInstructors(locals.runtime.db)
+    ]);
+    const isOwnerOrAdmin = actor.role === 'admin' || course.ownerId === actor.id;
+    return { course, sections, members, eligibleInstructors, isOwnerOrAdmin };
   } catch (cause) {
     rethrowRouteError(cause);
   }
 };
 
-async function fields(event: Parameters<Actions['updateCourse']>[0]) {
-  return event.request.formData();
+function uuidFromForm(form: FormData, key: string): string {
+  const parsed = uuidSchema.safeParse(form.get(key));
+  if (!parsed.success) throw new ValidationError('manage.error.invalidInput');
+  return parsed.data;
 }
 
 export const actions: Actions = {
   updateCourse: async (event) => {
     const actor = requireStaff(event.locals, event.url);
     try {
-      const form = await fields(event);
+      const form = await event.request.formData();
       const parsed = courseFieldsSchema.safeParse({
         title: form.get('title'),
         summary: form.get('summary'),
@@ -66,7 +61,7 @@ export const actions: Actions = {
   setStatus: async (event) => {
     const actor = requireStaff(event.locals, event.url);
     try {
-      const form = await fields(event);
+      const form = await event.request.formData();
       const parsed = courseStatusSchema.safeParse({ status: form.get('status') });
       if (!parsed.success) throw new ValidationError('manage.error.invalidInput');
       await setCourseStatus(event.locals.runtime.db, actor, event.params.courseId, parsed.data.status);
@@ -87,7 +82,7 @@ export const actions: Actions = {
   addSection: async (event) => {
     const actor = requireStaff(event.locals, event.url);
     try {
-      const form = await fields(event);
+      const form = await event.request.formData();
       const parsed = sectionTitleSchema.safeParse({ title: form.get('title') });
       if (!parsed.success) throw new ValidationError('manage.error.invalidInput');
       await addSection(event.locals.runtime.db, actor, event.params.courseId, parsed.data.title);
@@ -99,11 +94,11 @@ export const actions: Actions = {
   renameSection: async (event) => {
     const actor = requireStaff(event.locals, event.url);
     try {
-      const form = await fields(event);
+      const form = await event.request.formData();
       const sectionId = uuidFromForm(form, 'sectionId');
-      const title = sectionTitleSchema.safeParse({ title: form.get('title') });
-      if (!title.success) throw new ValidationError('manage.error.invalidInput');
-      await renameSection(event.locals.runtime.db, actor, sectionId, title.data.title);
+      const parsed = sectionTitleSchema.safeParse({ title: form.get('title') });
+      if (!parsed.success) throw new ValidationError('manage.error.invalidInput');
+      await renameSection(event.locals.runtime.db, actor, sectionId, parsed.data.title);
       return { ok: true };
     } catch (cause) {
       return actionFailure(cause);
@@ -112,11 +107,11 @@ export const actions: Actions = {
   moveSection: async (event) => {
     const actor = requireStaff(event.locals, event.url);
     try {
-      const form = await fields(event);
+      const form = await event.request.formData();
       const sectionId = uuidFromForm(form, 'sectionId');
-      const direction = moveSchema.safeParse({ direction: form.get('direction') });
-      if (!direction.success) throw new ValidationError('manage.error.invalidInput');
-      await moveSection(event.locals.runtime.db, actor, sectionId, direction.data.direction);
+      const parsed = moveSchema.safeParse({ direction: form.get('direction') });
+      if (!parsed.success) throw new ValidationError('manage.error.invalidInput');
+      await moveSection(event.locals.runtime.db, actor, sectionId, parsed.data.direction);
       return { ok: true };
     } catch (cause) {
       return actionFailure(cause);
@@ -125,8 +120,8 @@ export const actions: Actions = {
   deleteSection: async (event) => {
     const actor = requireStaff(event.locals, event.url);
     try {
-      const id = uuidFromForm(await fields(event), 'sectionId');
-      await deleteSection(event.locals.runtime.db, event.locals.runtime.files, actor, id);
+      const form = await event.request.formData();
+      await deleteSection(event.locals.runtime.db, event.locals.runtime.files, actor, uuidFromForm(form, 'sectionId'));
       return { ok: true };
     } catch (cause) {
       return actionFailure(cause);
@@ -135,7 +130,7 @@ export const actions: Actions = {
   addItem: async (event) => {
     const actor = requireStaff(event.locals, event.url);
     try {
-      const form = await fields(event);
+      const form = await event.request.formData();
       const parsed = addItemSchema.safeParse({
         sectionId: form.get('sectionId'),
         type: form.get('type'),
@@ -151,11 +146,11 @@ export const actions: Actions = {
   renameItem: async (event) => {
     const actor = requireStaff(event.locals, event.url);
     try {
-      const form = await fields(event);
+      const form = await event.request.formData();
       const itemId = uuidFromForm(form, 'itemId');
-      const title = itemTitleSchema.safeParse({ title: form.get('title') });
-      if (!title.success) throw new ValidationError('manage.error.invalidInput');
-      await renameItem(event.locals.runtime.db, actor, itemId, title.data.title);
+      const parsed = itemTitleSchema.safeParse({ title: form.get('title') });
+      if (!parsed.success) throw new ValidationError('manage.error.invalidInput');
+      await renameItem(event.locals.runtime.db, actor, itemId, parsed.data.title);
       return { ok: true };
     } catch (cause) {
       return actionFailure(cause);
@@ -164,11 +159,11 @@ export const actions: Actions = {
   moveItem: async (event) => {
     const actor = requireStaff(event.locals, event.url);
     try {
-      const form = await fields(event);
+      const form = await event.request.formData();
       const itemId = uuidFromForm(form, 'itemId');
-      const direction = moveSchema.safeParse({ direction: form.get('direction') });
-      if (!direction.success) throw new ValidationError('manage.error.invalidInput');
-      await moveItem(event.locals.runtime.db, actor, itemId, direction.data.direction);
+      const parsed = moveSchema.safeParse({ direction: form.get('direction') });
+      if (!parsed.success) throw new ValidationError('manage.error.invalidInput');
+      await moveItem(event.locals.runtime.db, actor, itemId, parsed.data.direction);
       return { ok: true };
     } catch (cause) {
       return actionFailure(cause);
@@ -177,18 +172,15 @@ export const actions: Actions = {
   deleteItem: async (event) => {
     const actor = requireStaff(event.locals, event.url);
     try {
-      const id = uuidFromForm(await fields(event), 'itemId');
-      await deleteItem(event.locals.runtime.db, event.locals.runtime.files, actor, id);
+      const form = await event.request.formData();
+      await deleteItem(event.locals.runtime.db, event.locals.runtime.files, actor, uuidFromForm(form, 'itemId'));
       return { ok: true };
     } catch (cause) {
       return actionFailure(cause);
     }
-  }
+  },
+  assignInstructor: handleAssignInstructor,
+  removeInstructor: handleRemoveInstructor,
+  enrollStudent: handleEnrollStudent,
+  unenrollStudent: handleUnenrollStudent
 };
-
-function uuidFromForm(form: FormData, key: string): string {
-  const parsed = uuidSchema.safeParse(form.get(key));
-  if (!parsed.success) throw new ValidationError('manage.error.invalidInput');
-  return parsed.data;
-}
-

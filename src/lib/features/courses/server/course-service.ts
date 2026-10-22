@@ -50,7 +50,7 @@ export async function getManageableCourse(db: LearningDb, actor: SessionUser, co
 export async function createCourse(
   db: LearningDb,
   actor: SessionUser,
-  input: { title: string; summary: string }
+  input: { title: string; summary: string; coverImageUrl?: string | null }
 ): Promise<string> {
   const base = slugify(input.title);
   for (let attempt = 0; attempt < 3; attempt += 1) {
@@ -58,7 +58,13 @@ export async function createCourse(
     try {
       const [created] = await db
         .insert(course)
-        .values({ slug, title: input.title, summary: input.summary, ownerId: actor.id })
+        .values({
+          slug,
+          title: input.title,
+          summary: input.summary,
+          coverImageUrl: input.coverImageUrl ?? null,
+          ownerId: actor.id
+        })
         .returning({ id: course.id });
       return created.id;
     } catch (cause) {
