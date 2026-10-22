@@ -1,0 +1,5 @@
+# Copy to .dev.vars for local development. Never commit .dev.vars or real credentials.
+NODE_ENV=development
+LEARNING_LOCAL_DEV=1
+LEARNING_BASE_URL=http://localhost:4177
+LEARNING_AUTH_SECRET=

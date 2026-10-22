@@ -1,0 +1,30 @@
+---
+description: Strict CSET Engineering Rules (No Emojis, 200-Line File Cap, Layered & Feature-Driven Architecture, Type Safety)
+globs: src/**/*.{svelte,ts,js}
+alwaysApply: true
+---
+
+# CSET Strict Engineering Standards
+
+1. ZERO EMOJI POLICY (CRITICAL)
+   - NEVER use emojis in code, markup, buttons, tabs, empty states, or UI components under any circumstances.
+   - Use custom vector SVG icons or clean minimalist typography for all visual indicators and controls.
+
+2. 200-LINE FILE LIMIT
+   - Keep individual code files strictly under 200 lines for optimal context management.
+   - Split large components into focused feature modules.
+   - Extract utility functions and database queries into dedicated service classes.
+
+3. ARCHITECTURE & DIRECTORY STRUCTURE
+   - Follow Feature-Driven Domain Architecture: `src/lib/features/<domain>/`
+   - Domains contain isolated `components/`, `server/`, and optional `schema.ts`.
+   - Shared platform code lives in `src/lib/core/` (db, auth, policy, i18n).
+
+4. API SECURITY & ACCESS CONTROL
+   - Enforce server-side role validation on every action: Core Team vs Squad Lead vs Member.
+   - Prevent IDOR (Insecure Direct Object Reference) by checking tenant/squad ownership directly in D1 queries.
+   - Always validate input schemas using Zod before passing to database layers.
+
+5. DESIGN SYSTEM FIDELITY
+   - Strictly use `cset-ui` components (Button, Card, InputField, Select, Dialog, Sheet, toast, Badge).
+   - Use Blueprint Schematic styling: technical corner-ticks, monospaced eyebrow badges (`eyebrow-badge`), and responsive layouts.
