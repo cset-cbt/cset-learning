@@ -17,7 +17,11 @@ export const quiz = sqliteTable('quiz', {
     .references(() => courseItem.id, { onDelete: 'cascade' }),
   passPercent: integer('pass_percent').notNull().default(70),
   // NULL means unlimited attempts.
-  maxAttempts: integer('max_attempts')
+  maxAttempts: integer('max_attempts'),
+  // NULL means all questions; otherwise random subset of N questions per attempt.
+  questionCount: integer('question_count'),
+  shuffleQuestions: integer('shuffle_questions', { mode: 'boolean' }).notNull().default(false),
+  shuffleOptions: integer('shuffle_options', { mode: 'boolean' }).notNull().default(false)
 });
 
 export const quizQuestion = sqliteTable(

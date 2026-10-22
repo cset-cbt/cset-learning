@@ -16,11 +16,23 @@ async function requireManagedQuiz(
   db: LearningDb,
   user: SessionUser,
   itemId: string
-): Promise<{ passPercent: number; maxAttempts: number | null }> {
+): Promise<{
+  passPercent: number;
+  maxAttempts: number | null;
+  questionCount: number | null;
+  shuffleQuestions: boolean;
+  shuffleOptions: boolean;
+}> {
   const { item } = await resolveManagedItem(db, user, itemId);
   if (item.type !== 'quiz') throw new NotFoundError();
   const rows = await db
-    .select({ passPercent: quiz.passPercent, maxAttempts: quiz.maxAttempts })
+    .select({
+      passPercent: quiz.passPercent,
+      maxAttempts: quiz.maxAttempts,
+      questionCount: quiz.questionCount,
+      shuffleQuestions: quiz.shuffleQuestions,
+      shuffleOptions: quiz.shuffleOptions
+    })
     .from(quiz)
     .where(eq(quiz.itemId, itemId))
     .limit(1);

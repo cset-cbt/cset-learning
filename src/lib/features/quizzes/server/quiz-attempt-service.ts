@@ -14,6 +14,15 @@ const answersSchema = z.record(z.string(), z.unknown()).superRefine((answers, co
   if (Object.keys(answers).length > 100) context.addIssue({ code: 'custom', message: 'Too many answers' });
 });
 
+function shuffleArray<T>(arr: T[]): T[] {
+  const copy = [...arr];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
 async function requireLearnerQuiz(db: LearningDb, user: SessionUser, itemId: string) {
   const { item } = await resolveLearnerItem(db, user, itemId);
   if (item.type !== 'quiz') throw new NotFoundError();
@@ -38,9 +47,35 @@ export async function loadQuizForLearner(
     .select({ attemptsUsed: count(), bestScorePercent: max(quizAttempt.scorePercent) })
     .from(quizAttempt)
     .where(and(eq(quizAttempt.userId, user.id), eq(quizAttempt.itemId, itemId)));
+  let selected = [...questions];
+  if (settings.shuffleQuestions || (settings.questionCount && settings.questionCount > 0)) {
+    selected = shuffleArray(selected);
+  }
+  if (settings.questionCount && settings.questionCount > 0 && settings.questionCount < selected.length) {
+    selected = selected.slice(0, settings.questionCount);
+  }
+
+  const publicQuestions = selected.map((q) => {
+    const pub = toPublicQuestion(q);
+    if (settings.shuffleOptions) {
+      if (pub.kind === 'single_choice' || pub.kind === 'multiple_choice') {
+        pub.config = { ...pub.config, options: shuffleArray(pub.config.options) };
+      } else if (pub.kind === 'matching') {
+        pub.config = { ...pub.config, right: shuffleArray(pub.config.right) };
+      }
+    }
+    return pub;
+  });
+
   return {
-    settings: { passPercent: settings.passPercent, maxAttempts: settings.maxAttempts },
-    questions: questions.map(toPublicQuestion),
+    settings: {
+      passPercent: settings.passPercent,
+      maxAttempts: settings.maxAttempts,
+      questionCount: settings.questionCount,
+      shuffleQuestions: settings.shuffleQuestions,
+      shuffleOptions: settings.shuffleOptions
+    },
+    questions: publicQuestions,
     attemptsUsed: stats[0]?.attemptsUsed ?? 0,
     bestScorePercent: stats[0]?.bestScorePercent ?? null
   };
@@ -80,8 +115,14 @@ export async function submitAttempt(
     .from(quizQuestion)
     .where(eq(quizQuestion.itemId, itemId))
     .orderBy(quizQuestion.position);
+  const submittedIds = new Set(Object.keys(parsedAnswers.data));
+  const activeRows = (settings.questionCount && settings.questionCount > 0)
+    ? questionRows.filter((q) => submittedIds.has(q.id))
+    : questionRows;
+  const gradeRows = activeRows.length > 0 ? activeRows : questionRows;
+
   const grade = gradeQuiz(
-    questionRows.map((row) => ({
+    gradeRows.map((row) => ({
       id: row.id,
       points: row.points,
       spec: parseQuestionSpec(row.kind, row.config, row.answerKey)
@@ -114,6 +155,6 @@ export async function submitAttempt(
     attemptsUsed: attemptsUsed + 1,
     maxAttempts: settings.maxAttempts,
     bestScorePercent,
-    review: questionRows.map((row, index) => toReviewItem(row, grade.detail[index]))
+    review: gradeRows.map((row, index) => toReviewItem(row, grade.detail[index]))
   };
 }

@@ -4,7 +4,10 @@ import { QUESTION_KINDS } from './shared/question-types';
 const questionIdSchema = z.string().min(1).max(100);
 const settingsSchema = z.object({
   passPercent: z.number().int().min(1).max(100),
-  maxAttempts: z.number().int().min(1).max(100).nullable()
+  maxAttempts: z.number().int().min(1).max(100).nullable(),
+  questionCount: z.number().int().min(1).max(200).nullable().optional(),
+  shuffleQuestions: z.boolean().optional().default(false),
+  shuffleOptions: z.boolean().optional().default(false)
 }).strict();
 const questionSchema = z.object({
   questionId: questionIdSchema.optional(),

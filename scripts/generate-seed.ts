@@ -206,9 +206,9 @@ INSERT INTO \`quiz_question\` (\`id\`, \`item_id\`, \`position\`, \`kind\`, \`pr
   ('q_mat', 'itm_quiz_comprehensive', 6, 'matching',
    'Hãy ghép nối mỗi thuật toán sau đây với độ phức tạp thời gian trong trường hợp xấu nhất (Worst-Case Time Complexity):',
    1,
-   '{"left":[{"id":"l1","text":"Merge Sort"},{"id":"l2","text":"Quick Sort"},{"id":"l3","text":"Bubble Sort"},{"id":"l4","text":"Linear Search"}],"right":[{"id":"r1","text":"O(N log N)"},{"id":"r2","text":"O(N^2)"},{"id":"r3","text":"O(N)"},{"id":"r4","text":"O(1)"}]}',
-   '{"pairs":{"l1":"r1","l2":"r2","l3":"r2","l4":"r3"}}',
-   'Merge Sort luôn là O(N log N). Quick Sort trường hợp xấu nhất (chọn pivot tồi) là O(N^2). Bubble Sort xấu nhất là O(N^2). Linear Search xấu nhất là O(N).',
+   '{"left":[{"id":"l1","text":"Merge Sort"},{"id":"l2","text":"Binary Search"},{"id":"l3","text":"Bubble Sort"},{"id":"l4","text":"Linear Search"}],"right":[{"id":"r1","text":"O(N log N)"},{"id":"r2","text":"O(N^2)"},{"id":"r3","text":"O(N)"},{"id":"r4","text":"O(log N)"}]}',
+   '{"pairs":{"l1":"r1","l2":"r4","l3":"r2","l4":"r3"}}',
+   'Merge Sort luôn là O(N log N). Binary Search là O(log N). Bubble Sort trường hợp xấu nhất là O(N^2). Linear Search xấu nhất là O(N).',
    ${now}, ${now})
 ON CONFLICT(\`id\`) DO UPDATE SET
   \`prompt_md\`=excluded.prompt_md,

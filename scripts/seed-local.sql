@@ -3,9 +3,9 @@
 
 -- 1. Users & Credentials
 INSERT INTO `user` (`id`, `name`, `email`, `email_verified`, `role`, `image`, `banned`, `created_at`, `updated_at`) VALUES
-  ('usr_admin', 'Võ Minh Long (Core Admin)', 'admin@cset.club', 1, 'admin', 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&q=80&auto=format&fit=crop', 0, 1792694268, 1792694268),
-  ('usr_instructor', 'Hoàng Mai (Giảng viên)', 'instructor@cset.club', 1, 'instructor', 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&q=80&auto=format&fit=crop', 0, 1792694268, 1792694268),
-  ('usr_student', 'Nguyễn Văn An (Học viên)', 'student@cset.club', 1, 'student', NULL, 0, 1792694268, 1792694268)
+  ('usr_admin', 'Võ Minh Long (Core Admin)', 'admin@cset.club', 1, 'admin', 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400&q=80&auto=format&fit=crop', 0, 1792698459, 1792698459),
+  ('usr_instructor', 'Hoàng Mai (Giảng viên)', 'instructor@cset.club', 1, 'instructor', 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&q=80&auto=format&fit=crop', 0, 1792698459, 1792698459),
+  ('usr_student', 'Nguyễn Văn An (Học viên)', 'student@cset.club', 1, 'student', NULL, 0, 1792698459, 1792698459)
 ON CONFLICT(`id`) DO UPDATE SET
   `name`=excluded.name,
   `email`=excluded.email,
@@ -14,9 +14,9 @@ ON CONFLICT(`id`) DO UPDATE SET
   `updated_at`=excluded.updated_at;
 
 INSERT INTO `account` (`id`, `account_id`, `provider_id`, `user_id`, `password`, `created_at`, `updated_at`) VALUES
-  ('acc_admin', 'admin@cset.club', 'credential', 'usr_admin', '5679f3b6a27787d2f32d2cf7c656e428:f3ab4e56e2a30f38967d4fa9e9c17b6f339215b7e7234e53582b7b7b0be7710dc600423196345bc1e3cf2c0eb2c8dc43117ee124fc6f8cc131cb7ba06a61ff9e', 1792694268, 1792694268),
-  ('acc_instructor', 'instructor@cset.club', 'credential', 'usr_instructor', '5679f3b6a27787d2f32d2cf7c656e428:f3ab4e56e2a30f38967d4fa9e9c17b6f339215b7e7234e53582b7b7b0be7710dc600423196345bc1e3cf2c0eb2c8dc43117ee124fc6f8cc131cb7ba06a61ff9e', 1792694268, 1792694268),
-  ('acc_student', 'student@cset.club', 'credential', 'usr_student', '5679f3b6a27787d2f32d2cf7c656e428:f3ab4e56e2a30f38967d4fa9e9c17b6f339215b7e7234e53582b7b7b0be7710dc600423196345bc1e3cf2c0eb2c8dc43117ee124fc6f8cc131cb7ba06a61ff9e', 1792694268, 1792694268)
+  ('acc_admin', 'admin@cset.club', 'credential', 'usr_admin', 'd7861d402525728b5e059da2d216334f:45193af4524c19d7bae9bbfe9c82adff56f2453e1933b4d6dc35bb9b7df784edf9004d682845319d2f53cfcc29c323802120b8609ba6bd141063bf18c33c9f28', 1792698459, 1792698459),
+  ('acc_instructor', 'instructor@cset.club', 'credential', 'usr_instructor', 'd7861d402525728b5e059da2d216334f:45193af4524c19d7bae9bbfe9c82adff56f2453e1933b4d6dc35bb9b7df784edf9004d682845319d2f53cfcc29c323802120b8609ba6bd141063bf18c33c9f28', 1792698459, 1792698459),
+  ('acc_student', 'student@cset.club', 'credential', 'usr_student', 'd7861d402525728b5e059da2d216334f:45193af4524c19d7bae9bbfe9c82adff56f2453e1933b4d6dc35bb9b7df784edf9004d682845319d2f53cfcc29c323802120b8609ba6bd141063bf18c33c9f28', 1792698459, 1792698459)
 ON CONFLICT(`id`) DO UPDATE SET
   `password`=excluded.password,
   `updated_at`=excluded.updated_at;
@@ -30,7 +30,7 @@ INSERT INTO `course` (`id`, `slug`, `title`, `summary`, `cover_image_url`, `stat
    'Nhập môn Lập trình Thi đấu & Khoa học Máy tính',
    'Khóa học nền tảng toàn diện của CLB CSET: lý thuyết thuật toán, cấu trúc dữ liệu, trắc nghiệm và hệ thống bài tập thực hành trực tuyến Python, C++ và Java.',
    'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=1200&q=80&auto=format&fit=crop',
-   'published', 'usr_instructor', 1792694268, 1792694268)
+   'published', 'usr_instructor', 1792698459, 1792698459)
 ON CONFLICT(`id`) DO UPDATE SET
   `title`=excluded.title,
   `summary`=excluded.summary,
@@ -40,21 +40,21 @@ ON CONFLICT(`id`) DO UPDATE SET
 
 -- Sections for Course 1
 INSERT INTO `course_section` (`id`, `course_id`, `title`, `position`, `created_at`) VALUES
-  ('sec_theory', 'crs_intro_cp', 'Phần 1: Lý thuyết căn bản & Thuật toán', 1, 1792694268),
-  ('sec_quiz', 'crs_intro_cp', 'Phần 2: Kiểm tra kiến thức tổng hợp', 2, 1792694268),
-  ('sec_coding', 'crs_intro_cp', 'Phần 3: Luyện tập lập trình trực tuyến', 3, 1792694268)
+  ('sec_theory', 'crs_intro_cp', 'Phần 1: Lý thuyết căn bản & Thuật toán', 1, 1792698459),
+  ('sec_quiz', 'crs_intro_cp', 'Phần 2: Kiểm tra kiến thức tổng hợp', 2, 1792698459),
+  ('sec_coding', 'crs_intro_cp', 'Phần 3: Luyện tập lập trình trực tuyến', 3, 1792698459)
 ON CONFLICT(`id`) DO UPDATE SET
   `title`=excluded.title,
   `position`=excluded.position;
 
 -- Items for Course 1
 INSERT INTO `course_item` (`id`, `course_id`, `section_id`, `type`, `title`, `position`, `created_at`, `updated_at`) VALUES
-  ('itm_lesson_intro', 'crs_intro_cp', 'sec_theory', 'lesson', 'Bài 1: Giới thiệu WebAssembly & Môi trường Sandbox', 1, 1792694268, 1792694268),
-  ('itm_lesson_complexity', 'crs_intro_cp', 'sec_theory', 'lesson', 'Bài 2: Phân tích độ phức tạp thời gian & Bộ nhớ', 2, 1792694268, 1792694268),
-  ('itm_quiz_comprehensive', 'crs_intro_cp', 'sec_quiz', 'quiz', 'Trắc nghiệm kiến thức thuật toán (6 dạng câu hỏi)', 1, 1792694268, 1792694268),
-  ('itm_ex_python', 'crs_intro_cp', 'sec_coding', 'exercise', 'Thực hành Python: Tính tổng dãy số nguyên', 1, 1792694268, 1792694268),
-  ('itm_ex_cpp', 'crs_intro_cp', 'sec_coding', 'exercise', 'Thực hành C++: Tìm Min và Max trong mảng', 2, 1792694268, 1792694268),
-  ('itm_ex_java', 'crs_intro_cp', 'sec_coding', 'exercise', 'Thực hành Java: Đếm số từ trong văn bản', 3, 1792694268, 1792694268)
+  ('itm_lesson_intro', 'crs_intro_cp', 'sec_theory', 'lesson', 'Bài 1: Giới thiệu WebAssembly & Môi trường Sandbox', 1, 1792698459, 1792698459),
+  ('itm_lesson_complexity', 'crs_intro_cp', 'sec_theory', 'lesson', 'Bài 2: Phân tích độ phức tạp thời gian & Bộ nhớ', 2, 1792698459, 1792698459),
+  ('itm_quiz_comprehensive', 'crs_intro_cp', 'sec_quiz', 'quiz', 'Trắc nghiệm kiến thức thuật toán (6 dạng câu hỏi)', 1, 1792698459, 1792698459),
+  ('itm_ex_python', 'crs_intro_cp', 'sec_coding', 'exercise', 'Thực hành Python: Tính tổng dãy số nguyên', 1, 1792698459, 1792698459),
+  ('itm_ex_cpp', 'crs_intro_cp', 'sec_coding', 'exercise', 'Thực hành C++: Tìm Min và Max trong mảng', 2, 1792698459, 1792698459),
+  ('itm_ex_java', 'crs_intro_cp', 'sec_coding', 'exercise', 'Thực hành Java: Đếm số từ trong văn bản', 3, 1792698459, 1792698459)
 ON CONFLICT(`id`) DO UPDATE SET
   `title`=excluded.title,
   `position`=excluded.position,
@@ -154,7 +154,7 @@ INSERT INTO `quiz_question` (`id`, `item_id`, `position`, `kind`, `prompt_md`, `
    '{"options":[{"id":"opt_a","text":"O(1)"},{"id":"opt_b","text":"O(log N)"},{"id":"opt_c","text":"O(N)"},{"id":"opt_d","text":"O(N log N)"}]}',
    '{"correctOptionId":"opt_b"}',
    'Tìm kiếm nhị phân chia đôi không gian tìm kiếm sau mỗi bước so sánh, do đó số bước tối đa là log2(N).',
-   1792694268, 1792694268),
+   1792698459, 1792698459),
 
   -- 2. Multiple Choice
   ('q_mc', 'itm_quiz_comprehensive', 2, 'multiple_choice',
@@ -163,7 +163,7 @@ INSERT INTO `quiz_question` (`id`, `item_id`, `position`, `kind`, `prompt_md`, `
    '{"options":[{"id":"mc_a","text":"std::deque"},{"id":"mc_b","text":"std::vector"},{"id":"mc_c","text":"std::list"},{"id":"mc_d","text":"std::priority_queue"}]}',
    '{"correctOptionIds":["mc_a","mc_c"]}',
    'std::deque (hàng đợi hai đầu) và std::list (danh sách liên kết đôi) đều hỗ trợ push_front, pop_front, push_back, pop_back trong O(1). std::vector chỉ hỗ trợ O(1) ở đuôi (back).',
-   1792694268, 1792694268),
+   1792698459, 1792698459),
 
   -- 3. True / False
   ('q_tf', 'itm_quiz_comprehensive', 3, 'true_false',
@@ -172,7 +172,7 @@ INSERT INTO `quiz_question` (`id`, `item_id`, `position`, `kind`, `prompt_md`, `
    '{}',
    '{"correct":true}',
    'Đúng. Khi mảng đầy, Python cấp phát thêm bộ nhớ với hệ số tăng trưởng định sẵn. Do đó chi phí bổ sung trung bình là O(1).',
-   1792694268, 1792694268),
+   1792698459, 1792698459),
 
   -- 4. Short Answer
   ('q_sa', 'itm_quiz_comprehensive', 4, 'short_answer',
@@ -181,7 +181,7 @@ INSERT INTO `quiz_question` (`id`, `item_id`, `position`, `kind`, `prompt_md`, `
    '{}',
    '{"accepted":["queue","Queue","QUEUE","hàng đợi","Hàng đợi"],"caseSensitive":false}',
    'Queue (Hàng đợi) hoạt động theo nguyên lý FIFO, ngược với Stack (Ngăn xếp) hoạt động theo LIFO.',
-   1792694268, 1792694268),
+   1792698459, 1792698459),
 
   -- 5. Numeric with tolerance
   ('q_num', 'itm_quiz_comprehensive', 5, 'numeric',
@@ -190,16 +190,16 @@ INSERT INTO `quiz_question` (`id`, `item_id`, `position`, `kind`, `prompt_md`, `
    '{"unit":"giá trị"}',
    '{"value":55,"tolerance":0}',
    'Các số Fibonacci đầu tiên: 1, 1, 2, 3, 5, 8, 13, 21, 34, 55. Do đó F(10) = 55.',
-   1792694268, 1792694268),
+   1792698459, 1792698459),
 
   -- 6. Matching
   ('q_mat', 'itm_quiz_comprehensive', 6, 'matching',
    'Hãy ghép nối mỗi thuật toán sau đây với độ phức tạp thời gian trong trường hợp xấu nhất (Worst-Case Time Complexity):',
    1,
-   '{"left":[{"id":"l1","text":"Merge Sort"},{"id":"l2","text":"Quick Sort"},{"id":"l3","text":"Bubble Sort"},{"id":"l4","text":"Linear Search"}],"right":[{"id":"r1","text":"O(N log N)"},{"id":"r2","text":"O(N^2)"},{"id":"r3","text":"O(N)"},{"id":"r4","text":"O(1)"}]}',
-   '{"pairs":{"l1":"r1","l2":"r2","l3":"r2","l4":"r3"}}',
-   'Merge Sort luôn là O(N log N). Quick Sort trường hợp xấu nhất (chọn pivot tồi) là O(N^2). Bubble Sort xấu nhất là O(N^2). Linear Search xấu nhất là O(N).',
-   1792694268, 1792694268)
+   '{"left":[{"id":"l1","text":"Merge Sort"},{"id":"l2","text":"Binary Search"},{"id":"l3","text":"Bubble Sort"},{"id":"l4","text":"Linear Search"}],"right":[{"id":"r1","text":"O(N log N)"},{"id":"r2","text":"O(N^2)"},{"id":"r3","text":"O(N)"},{"id":"r4","text":"O(log N)"}]}',
+   '{"pairs":{"l1":"r1","l2":"r4","l3":"r2","l4":"r3"}}',
+   'Merge Sort luôn là O(N log N). Binary Search là O(log N). Bubble Sort trường hợp xấu nhất là O(N^2). Linear Search xấu nhất là O(N).',
+   1792698459, 1792698459)
 ON CONFLICT(`id`) DO UPDATE SET
   `prompt_md`=excluded.prompt_md,
   `config`=excluded.config,
@@ -376,7 +376,7 @@ INSERT INTO `course` (`id`, `slug`, `title`, `summary`, `cover_image_url`, `stat
    'Cấu trúc Dữ liệu & Giải thuật nâng cao',
    'Khóa học chuyên sâu dành cho đội tuyển HSG Tin học: Cây phân đoạn (Segment Tree), Fenwick Tree, Quy hoạch động trạng thái và Đồ thị nâng cao.',
    'https://images.unsplash.com/photo-1509228468518-180dd4864904?w=1200&q=80&auto=format&fit=crop',
-   'published', 'usr_instructor', 1792694268, 1792694268)
+   'published', 'usr_instructor', 1792698459, 1792698459)
 ON CONFLICT(`id`) DO UPDATE SET
   `title`=excluded.title,
   `summary`=excluded.summary,
@@ -385,13 +385,13 @@ ON CONFLICT(`id`) DO UPDATE SET
   `updated_at`=excluded.updated_at;
 
 INSERT INTO `course_section` (`id`, `course_id`, `title`, `position`, `created_at`) VALUES
-  ('sec_adv_tree', 'crs_advanced_algo', 'Chuyên đề Cây phân đoạn (Segment Tree)', 1, 1792694268)
+  ('sec_adv_tree', 'crs_advanced_algo', 'Chuyên đề Cây phân đoạn (Segment Tree)', 1, 1792698459)
 ON CONFLICT(`id`) DO UPDATE SET
   `title`=excluded.title,
   `position`=excluded.position;
 
 INSERT INTO `course_item` (`id`, `course_id`, `section_id`, `type`, `title`, `position`, `created_at`, `updated_at`) VALUES
-  ('itm_lesson_segtree', 'crs_advanced_algo', 'sec_adv_tree', 'lesson', 'Lý thuyết: Point Update & Range Sum Query', 1, 1792694268, 1792694268)
+  ('itm_lesson_segtree', 'crs_advanced_algo', 'sec_adv_tree', 'lesson', 'Lý thuyết: Point Update & Range Sum Query', 1, 1792698459, 1792698459)
 ON CONFLICT(`id`) DO UPDATE SET
   `title`=excluded.title,
   `position`=excluded.position,
@@ -416,7 +416,7 @@ INSERT INTO `course` (`id`, `slug`, `title`, `summary`, `cover_image_url`, `stat
    'Lập trình Web Hiện đại với SvelteKit & Cloudflare',
    'Xây dựng ứng dụng full-stack hiện đại với Svelte 5 Runes, Tailwind CSS v4, cơ sở dữ liệu phân tán Cloudflare D1 và Object Storage R2.',
    'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1200&q=80&auto=format&fit=crop',
-   'published', 'usr_admin', 1792694268, 1792694268)
+   'published', 'usr_admin', 1792698459, 1792698459)
 ON CONFLICT(`id`) DO UPDATE SET
   `title`=excluded.title,
   `summary`=excluded.summary,
@@ -425,13 +425,13 @@ ON CONFLICT(`id`) DO UPDATE SET
   `updated_at`=excluded.updated_at;
 
 INSERT INTO `course_section` (`id`, `course_id`, `title`, `position`, `created_at`) VALUES
-  ('sec_web_core', 'crs_web_modern', 'Chương 1: Kiến trúc Edge Computing & Svelte 5', 1, 1792694268)
+  ('sec_web_core', 'crs_web_modern', 'Chương 1: Kiến trúc Edge Computing & Svelte 5', 1, 1792698459)
 ON CONFLICT(`id`) DO UPDATE SET
   `title`=excluded.title,
   `position`=excluded.position;
 
 INSERT INTO `course_item` (`id`, `course_id`, `section_id`, `type`, `title`, `position`, `created_at`, `updated_at`) VALUES
-  ('itm_lesson_svelte5', 'crs_web_modern', 'sec_web_core', 'lesson', 'Bài 1: Svelte 5 Runes cơ bản ($state, $derived, $effect)', 1, 1792694268, 1792694268)
+  ('itm_lesson_svelte5', 'crs_web_modern', 'sec_web_core', 'lesson', 'Bài 1: Svelte 5 Runes cơ bản ($state, $derived, $effect)', 1, 1792698459, 1792698459)
 ON CONFLICT(`id`) DO UPDATE SET
   `title`=excluded.title,
   `position`=excluded.position,
@@ -456,7 +456,7 @@ INSERT INTO `course` (`id`, `slug`, `title`, `summary`, `cover_image_url`, `stat
    'Mật mã học & An toàn Thông tin (CTF Basics)',
    'Khóa học nhập môn an toàn thông tin và giải đề CTF (Capture The Flag): mã hóa cổ điển, mã hóa khóa công khai RSA và phân tích lỗ hổng web.',
    'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1200&q=80&auto=format&fit=crop',
-   'draft', 'usr_instructor', 1792694268, 1792694268)
+   'draft', 'usr_instructor', 1792698459, 1792698459)
 ON CONFLICT(`id`) DO UPDATE SET
   `title`=excluded.title,
   `summary`=excluded.summary,
@@ -465,13 +465,13 @@ ON CONFLICT(`id`) DO UPDATE SET
   `updated_at`=excluded.updated_at;
 
 INSERT INTO `course_section` (`id`, `course_id`, `title`, `position`, `created_at`) VALUES
-  ('sec_crypto_intro', 'crs_ctf_basics', 'Chương 1: Mật mã học cổ điển & Phân tích tần suất', 1, 1792694268)
+  ('sec_crypto_intro', 'crs_ctf_basics', 'Chương 1: Mật mã học cổ điển & Phân tích tần suất', 1, 1792698459)
 ON CONFLICT(`id`) DO UPDATE SET
   `title`=excluded.title,
   `position`=excluded.position;
 
 INSERT INTO `course_item` (`id`, `course_id`, `section_id`, `type`, `title`, `position`, `created_at`, `updated_at`) VALUES
-  ('itm_lesson_caesar', 'crs_ctf_basics', 'sec_crypto_intro', 'lesson', 'Bài 1: Mật mã Caesar & Phương pháp vét cạn khóa', 1, 1792694268, 1792694268)
+  ('itm_lesson_caesar', 'crs_ctf_basics', 'sec_crypto_intro', 'lesson', 'Bài 1: Mật mã Caesar & Phương pháp vét cạn khóa', 1, 1792698459, 1792698459)
 ON CONFLICT(`id`) DO UPDATE SET
   `title`=excluded.title,
   `position`=excluded.position,
@@ -493,9 +493,9 @@ ON CONFLICT(`item_id`) DO UPDATE SET
 
 -- 6. Enroll Student in Course 1 and complete Lesson 1
 INSERT INTO `enrollment` (`user_id`, `course_id`, `enrolled_at`) VALUES
-  ('usr_student', 'crs_intro_cp', 1792694268)
+  ('usr_student', 'crs_intro_cp', 1792698459)
 ON CONFLICT(`user_id`, `course_id`) DO NOTHING;
 
 INSERT INTO `item_progress` (`user_id`, `item_id`, `completed_at`) VALUES
-  ('usr_student', 'itm_lesson_intro', 1792694268)
+  ('usr_student', 'itm_lesson_intro', 1792698459)
 ON CONFLICT(`user_id`, `item_id`) DO NOTHING;

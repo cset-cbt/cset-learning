@@ -4,6 +4,9 @@ import type { QuestionAnswerKeyMap, QuestionConfigMap } from './question-types';
 export interface QuizSettings {
   passPercent: number;
   maxAttempts: number | null;
+  questionCount?: number | null;
+  shuffleQuestions?: boolean;
+  shuffleOptions?: boolean;
 }
 
 type PublicQuestionFor<K extends QuizQuestionKind> = {

@@ -26,9 +26,13 @@ export const quizEditorActions: Record<string, Action> = {
       const itemId = routeItemId(event.params.itemId);
       const form = await event.request.formData();
       const maxAttemptsText = field(form, 'maxAttempts');
+      const questionCountText = field(form, 'questionCount');
       await updateQuizSettings(event.locals.runtime.db, user, itemId, {
         passPercent: Number(field(form, 'passPercent')),
-        maxAttempts: maxAttemptsText === '' ? null : Number(maxAttemptsText)
+        maxAttempts: maxAttemptsText === '' ? null : Number(maxAttemptsText),
+        questionCount: questionCountText === '' ? null : Number(questionCountText),
+        shuffleQuestions: form.get('shuffleQuestions') === 'on' || form.get('shuffleQuestions') === 'true',
+        shuffleOptions: form.get('shuffleOptions') === 'on' || form.get('shuffleOptions') === 'true'
       });
       return { ok: true };
     } catch (cause) {

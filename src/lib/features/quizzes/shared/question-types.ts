@@ -11,7 +11,7 @@ export const QUESTION_KINDS = [
 ] as const satisfies readonly QuizQuestionKind[];
 
 
-const idSchema = z.string().regex(/^[0-9a-z]{8}$/);
+const idSchema = z.string().min(1).max(64).regex(/^[0-9a-zA-Z_-]+$/);
 const optionSchema = z.object({ id: idSchema, text: z.string().min(1).max(300) }).strict();
 const optionsSchema = z
   .array(optionSchema)

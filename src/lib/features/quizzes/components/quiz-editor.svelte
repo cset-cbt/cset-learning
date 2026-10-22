@@ -11,9 +11,15 @@
   let { detail }: { detail: QuizEditorData } = $props();
   let passPercent = $state('');
   let maxAttempts = $state('');
+  let questionCount = $state('');
+  let shuffleQuestions = $state(false);
+  let shuffleOptions = $state(false);
   $effect(() => {
     passPercent = String(detail.settings.passPercent);
     maxAttempts = detail.settings.maxAttempts === null ? '' : String(detail.settings.maxAttempts);
+    questionCount = detail.settings.questionCount === null || detail.settings.questionCount === undefined ? '' : String(detail.settings.questionCount);
+    shuffleQuestions = Boolean(detail.settings.shuffleQuestions);
+    shuffleOptions = Boolean(detail.settings.shuffleOptions);
   });
   let settingsError = $state(false);
   let dialogOpen = $state(false);
@@ -56,7 +62,7 @@
   <Card>
     <form method="POST" action="?/saveQuizSettings" use:enhance={enhanceSettings} class="space-y-4">
       <h2 class="text-xl font-semibold text-ink">{$t('quiz.editor.settings')}</h2>
-      <div class="grid gap-4 sm:grid-cols-2">
+      <div class="grid gap-4 sm:grid-cols-3">
         <InputField
           label={$t('quiz.editor.passPercent')}
           type="number"
@@ -65,7 +71,7 @@
           step="1"
           name="passPercent"
           value={passPercent}
-          oninput={(event: Event) => passPercent = eventValue(event)}
+          oninput={(event: Event) => (passPercent = eventValue(event))}
         />
         <div class="space-y-1">
           <InputField
@@ -76,10 +82,45 @@
             step="1"
             name="maxAttempts"
             value={maxAttempts}
-            oninput={(event: Event) => maxAttempts = eventValue(event)}
+            oninput={(event: Event) => (maxAttempts = eventValue(event))}
           />
-          <p class="text-xs text-ink-muted">{$t('quiz.editor.unlimited')}</p>
+          <p class="text-[0.68rem] text-ink-muted">{$t('quiz.editor.unlimited')}</p>
         </div>
+        <div class="space-y-1">
+          <InputField
+            label={$t('quiz.editor.questionCount')}
+            type="number"
+            min="1"
+            max="200"
+            step="1"
+            name="questionCount"
+            value={questionCount}
+            oninput={(event: Event) => (questionCount = eventValue(event))}
+          />
+          <p class="text-[0.68rem] text-ink-muted">{$t('quiz.editor.questionCountHint')}</p>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap gap-6 pt-3 border-t border-border">
+        <label class="flex items-center gap-2 text-xs font-semibold text-ink cursor-pointer select-none">
+          <input
+            type="checkbox"
+            name="shuffleQuestions"
+            bind:checked={shuffleQuestions}
+            class="h-4 w-4 rounded border-border-strong text-accent focus:ring-accent"
+          />
+          <span>{$t('quiz.editor.shuffleQuestions')}</span>
+        </label>
+
+        <label class="flex items-center gap-2 text-xs font-semibold text-ink cursor-pointer select-none">
+          <input
+            type="checkbox"
+            name="shuffleOptions"
+            bind:checked={shuffleOptions}
+            class="h-4 w-4 rounded border-border-strong text-accent focus:ring-accent"
+          />
+          <span>{$t('quiz.editor.shuffleOptions')}</span>
+        </label>
       </div>
       {#if settingsError}
         <FormMessage variant="error">{$t('quiz.error.invalidSettings')}</FormMessage>
