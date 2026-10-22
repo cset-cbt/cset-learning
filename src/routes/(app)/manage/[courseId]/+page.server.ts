@@ -9,7 +9,8 @@ import {
 } from '$lib/features/courses/server/outline-service';
 import { listCourseMembers, listEligibleInstructors } from '$lib/features/courses/server/course-members-service';
 import {
-  handleAssignInstructor, handleEnrollStudents, handleRemoveInstructor, handleUnenrollStudent
+  handleAssignInstructor, handleEnrollStudents, handleRemoveInstructor, handleUnenrollStudent,
+  handleUploadCover, handleRemoveCover
 } from '$lib/features/courses/server/manage-course-handlers';
 import {
   addItemSchema, courseFieldsSchema, courseStatusSchema, itemTitleSchema,
@@ -183,5 +184,7 @@ export const actions: Actions = {
   removeInstructor: handleRemoveInstructor,
   enrollStudent: handleEnrollStudents,
   enrollStudents: handleEnrollStudents,
-  unenrollStudent: handleUnenrollStudent
+  unenrollStudent: handleUnenrollStudent,
+  uploadCover: handleUploadCover,
+  removeCover: handleRemoveCover
 };

@@ -3,6 +3,7 @@
   import { Badge, Breadcrumb, Button, Card, ConfirmDialog, FormMessage, PageHeader } from 'cset-ui';
   import { isMessageKey, t } from '$lib/core/i18n';
   import CourseSettingsForm from '$lib/features/courses/components/course-settings-form.svelte';
+  import CourseCoverBanner from '$lib/features/courses/components/course-cover-banner.svelte';
   import OutlineEditor from '$lib/features/courses/components/outline-editor.svelte';
   import CourseMembersManager from '$lib/features/courses/components/course-members-manager.svelte';
   import PublishToggle from '$lib/features/courses/components/publish-toggle.svelte';
@@ -115,7 +116,9 @@
     />
   {:else if activeTab === 'settings'}
     <div class="space-y-6">
-      <Card class="space-y-5">
+      <CourseCoverBanner courseId={data.course.id} coverImageUrl={data.course.coverImageUrl} />
+
+      <Card class="space-y-5 p-6">
         <h2 class="text-base font-bold text-ink">{$t('manage.settingsTitle')}</h2>
         <CourseSettingsForm course={data.course} />
       </Card>

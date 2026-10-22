@@ -7,6 +7,7 @@ import {
   removeCourseInstructor,
   unenrollCourseStudent
 } from './course-members-service';
+import { uploadCourseCover, removeCourseCover } from './course-cover-service';
 
 export async function handleAssignInstructor(event: RequestEvent) {
   const actor = requireStaff(event.locals, event.url);
@@ -60,6 +61,42 @@ export async function handleEnrollStudents(event: RequestEvent) {
       throw new ValidationError('manage.error.invalidInput');
     }
     await enrollStudentsBatch(event.locals.runtime.db, actor, event.params.courseId!, ids);
+    return { ok: true };
+  } catch (cause) {
+    return actionFailure(cause);
+  }
+}
+
+export async function handleUploadCover(event: RequestEvent) {
+  const actor = requireStaff(event.locals, event.url);
+  try {
+    const form = await event.request.formData();
+    const file = form.get('cover');
+    if (!(file instanceof File)) {
+      throw new ValidationError('account.error.noFileSelected');
+    }
+    const result = await uploadCourseCover(
+      event.locals.runtime.db,
+      event.locals.runtime.files,
+      actor,
+      event.params.courseId!,
+      file
+    );
+    return { ok: true, coverImageUrl: result.coverImageUrl };
+  } catch (cause) {
+    return actionFailure(cause);
+  }
+}
+
+export async function handleRemoveCover(event: RequestEvent) {
+  const actor = requireStaff(event.locals, event.url);
+  try {
+    await removeCourseCover(
+      event.locals.runtime.db,
+      event.locals.runtime.files,
+      actor,
+      event.params.courseId!
+    );
     return { ok: true };
   } catch (cause) {
     return actionFailure(cause);
