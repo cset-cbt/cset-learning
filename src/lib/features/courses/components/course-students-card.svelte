@@ -1,15 +1,13 @@
 <script lang="ts">
-  import { Avatar, Badge, Button, Card, ConfirmDialog, Dialog, InputField } from 'cset-ui';
+  import { Avatar, Badge, Button, Card, ConfirmDialog } from 'cset-ui';
   import ProgressBar from '$lib/core/shell/progress-bar.svelte';
-  import { eventValue } from '$lib/core/forms/event-value';
   import { t } from '$lib/core/i18n';
+  import EnrollStudentsDialog from './enroll-students-dialog.svelte';
   import type { CourseStudentMember } from '../server/course-members-service';
 
-  let { students }: { students: CourseStudentMember[] } = $props();
+  let { courseId, students }: { courseId: string; students: CourseStudentMember[] } = $props();
 
   let enrollOpen = $state(false);
-  let studentEmail = $state('');
-
   let unenrollId = $state<string | null>(null);
   let confirmOpen = $state(false);
   let unenrollForm = $state<HTMLFormElement | null>(null);
@@ -80,23 +78,7 @@
   {/if}
 </Card>
 
-<Dialog bind:open={enrollOpen} title={$t('manage.members.enrollStudent')} size="sm">
-  <form method="POST" action="?/enrollStudent" class="space-y-4" onsubmit={() => (enrollOpen = false)}>
-    <InputField
-      label={$t('manage.members.studentEmail')}
-      name="email"
-      type="email"
-      required
-      value={studentEmail}
-      oninput={(e: Event) => (studentEmail = eventValue(e))}
-      placeholder="hocvien@cset.club"
-    />
-    <div class="flex items-center justify-end gap-2.5 pt-3 border-t border-border">
-      <Button type="button" variant="secondary" onclick={() => (enrollOpen = false)}>{$t('common.cancel')}</Button>
-      <Button type="submit">{$t('manage.members.enrollStudent')}</Button>
-    </div>
-  </form>
-</Dialog>
+<EnrollStudentsDialog bind:open={enrollOpen} {courseId} />
 
 <form bind:this={unenrollForm} method="POST" action="?/unenrollStudent" class="hidden">
   <input type="hidden" name="targetUserId" value={unenrollId ?? ''} />

@@ -100,7 +100,6 @@
       {$t('manage.tab.settings')}
     </button>
   </div>
-
   <!-- Tab Panes -->
   {#if activeTab === 'content'}
     <div class="space-y-6">
@@ -108,6 +107,7 @@
     </div>
   {:else if activeTab === 'members'}
     <CourseMembersManager
+      courseId={data.course.id}
       instructors={data.members.instructors}
       students={data.members.students}
       eligibleInstructors={data.eligibleInstructors}

@@ -159,28 +159,20 @@ export async function removeCourseInstructor(
     .where(and(eq(courseInstructor.courseId, courseId), eq(courseInstructor.userId, targetUserId)));
 }
 
-export async function enrollStudentByEmail(
+export async function enrollStudentsBatch(
   db: LearningDb,
   actor: SessionUser,
   courseId: string,
-  studentEmail: string
-): Promise<void> {
+  userIds: string[]
+): Promise<number> {
   await resolveManagedCourse(db, actor, { courseId });
+  const uniqueIds = Array.from(new Set(userIds.filter((id) => typeof id === 'string' && id.trim().length > 0)));
+  if (uniqueIds.length === 0) return 0;
 
-  const [foundUser] = await db
-    .select({ id: user.id })
-    .from(user)
-    .where(eq(user.email, studentEmail.trim().toLowerCase()))
-    .limit(1);
-
-  if (!foundUser) {
-    throw new ValidationError('manage.error.studentNotFound');
-  }
-
-  await db
-    .insert(enrollment)
-    .values({ userId: foundUser.id, courseId, enrolledAt: new Date() })
-    .onConflictDoNothing();
+  const now = new Date();
+  const rows = uniqueIds.map((userId) => ({ userId, courseId, enrolledAt: now }));
+  await db.insert(enrollment).values(rows).onConflictDoNothing();
+  return uniqueIds.length;
 }
 
 export async function unenrollCourseStudent(
