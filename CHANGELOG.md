@@ -25,3 +25,4 @@ All notable changes to CSET Learning are documented here, following Keep a Chang
 - Dialog-based section addition: replaced the inline outline section form with a clean header "+ Add Section" button and dedicated creation dialog.
 - Fixed quiz editor 500 error: relaxed question option identifier validation regex to support flexible formats (such as opt_a, l1, r1) and corrected seed matching pairs.
 - Randomized and shuffled quizzes: added configurable question count per attempt (randomly slicing N questions from larger banks), question order shuffling, and answer options order shuffling (migration `0003_windy_zuras.sql`).
+- Admin user avatars: rendered user avatars in the administrator user management table (`/admin/users`) alongside names and badges.

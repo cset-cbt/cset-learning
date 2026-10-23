@@ -5,6 +5,7 @@ export interface AdminUserRow {
   name: string;
   email: string;
   role: UserRole;
+  image?: string | null;
   banned: boolean;
   banReason: string | null;
   createdAt: string;

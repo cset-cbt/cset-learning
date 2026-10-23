@@ -1,6 +1,6 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
-  import { Badge, Button, Select } from 'cset-ui';
+  import { Avatar, Badge, Button, Select } from 'cset-ui';
   import { USER_ROLES } from '$lib/core/auth/session-user';
   import { locale, t } from '$lib/core/i18n';
   import type { AdminUserRow } from '../shared/admin-types';
@@ -31,10 +31,15 @@
 
 <tr class="border-b border-border align-middle">
   <td class="px-4 py-3 font-semibold text-ink">
-    {user.name}
-    {#if isSelf}
-      <Badge variant="outline" color="neutral">{$t('admin.you')}</Badge>
-    {/if}
+    <div class="flex items-center gap-3">
+      <Avatar src={user.image} name={user.name} size="sm" />
+      <div class="flex flex-wrap items-center gap-2">
+        <span>{user.name}</span>
+        {#if isSelf}
+          <Badge variant="outline" color="neutral">{$t('admin.you')}</Badge>
+        {/if}
+      </div>
+    </div>
   </td>
   <td class="px-4 py-3 text-ink-muted">{user.email}</td>
   <td class="px-4 py-3">

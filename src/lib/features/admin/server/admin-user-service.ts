@@ -37,6 +37,7 @@ export async function listAdminUsers(
       name: row.name,
       email: row.email,
       role: isUserRole(row.role) ? row.role : 'student',
+      image: row.image ?? null,
       banned: row.banned === true,
       banReason: row.banReason ?? null,
       createdAt: new Date(row.createdAt).toISOString()
