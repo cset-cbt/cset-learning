@@ -44,6 +44,7 @@ export const coreEn: Record<keyof typeof coreVi, string> = {
   'auth.login.submit': 'Sign in',
   'auth.login.switch': 'No account yet? Register',
   'auth.login.forgot': 'Forgot your password? Ask an administrator to reset it.',
+  'auth.login.demoTitle': 'Quick demo accounts',
   'auth.register.title': 'Create an account',
   'auth.register.description': 'CSET Learning uses its own accounts, separate from CSET Auth.',
   'auth.register.submit': 'Register',

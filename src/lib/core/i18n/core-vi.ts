@@ -42,6 +42,7 @@ export const coreVi = {
   'auth.login.submit': 'Đăng nhập',
   'auth.login.switch': 'Chưa có tài khoản? Đăng ký',
   'auth.login.forgot': 'Quên mật khẩu? Hãy liên hệ quản trị viên để được đặt lại.',
+  'auth.login.demoTitle': 'Tài khoản trải nghiệm nhanh',
   'auth.register.title': 'Tạo tài khoản',
   'auth.register.description': 'Tài khoản CSET Learning là tài khoản riêng, không dùng chung với CSET Auth.',
   'auth.register.submit': 'Đăng ký',

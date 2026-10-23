@@ -33,7 +33,7 @@ INSERT INTO \`account\` (\`id\`, \`user_id\`, \`account_id\`, \`provider_id\`, \
   ('acc_student', 'usr_student', 'student@cset.club', 'credential', '${pwhash}', ${now}, ${now}),
   ('acc_student_2', 'usr_student_2', 'tran_thu_ha@cset.club', 'credential', '${pwhash}', ${now}, ${now}),
   ('acc_student_3', 'usr_student_3', 'dang_tuan_anh@cset.club', 'credential', '${pwhash}', ${now}, ${now})
-ON CONFLICT(\`id\`) DO NOTHING;
+ON CONFLICT(\`id\`) DO UPDATE SET \`password\`=excluded.password;
 
 -- 2. Course 1: Nhập môn Lập trình Thi đấu & Khoa học Máy tính
 INSERT INTO \`course\` (\`id\`, \`slug\`, \`title\`, \`summary\`, \`cover_image_url\`, \`status\`, \`owner_id\`, \`created_at\`, \`updated_at\`) VALUES
