@@ -23,6 +23,7 @@ export const lessonsEn: Record<keyof typeof lessonsVi, string> = {
   'lesson.toolbar.link': 'Link',
   'lesson.toolbar.image': 'Image',
   'lesson.toolbar.hr': 'Divider',
+  'lesson.characters': 'characters',
   'lesson.body': 'Markdown content',
   'lesson.attachments': 'Attachments',
   'lesson.attachmentGuidance': 'PDF, images, text and ZIP files are accepted, up to 10 MiB each.',

@@ -1,20 +1,19 @@
 <script lang="ts">
   import { Button, Card, Tabs, type TabItem } from 'cset-ui';
   import { t } from '$lib/core/i18n';
-  import { eventValue } from '$lib/core/forms/event-value';
   import RichToolbar from './rich-toolbar.svelte';
   import MarkdownContent from './markdown-content.svelte';
   import AttachmentPanel from './attachment-panel.svelte';
   import type { LessonAttachment } from '../server/lesson-service';
+
   let { detail }: { detail: { bodyMd: string; attachments: LessonAttachment[] } } = $props();
   // svelte-ignore state_referenced_locally
   let draft = $state(detail.bodyMd);
-  let view = $state<'write' | 'split' | 'preview'>('write');
+  let view = $state<'write' | 'preview'>('write');
   let textareaEl = $state<HTMLTextAreaElement | null>(null);
 
   const tabs = $derived<TabItem[]>([
     { value: 'write', label: $t('lesson.write') },
-    { value: 'split', label: $t('lesson.split') },
     { value: 'preview', label: $t('lesson.preview') }
   ]);
 
@@ -115,31 +114,16 @@
 
 <div class="space-y-6">
   <form method="POST" action="?/saveLesson" class="space-y-4">
+    <!-- Header with 2 Modes: Soạn thảo (Split View) and Xem trước (Preview) -->
     <div class="flex items-center justify-between border-b border-border pb-2">
       <Tabs bind:value={view} items={tabs} />
-      <span class="mono-label text-[0.68rem] text-ink-muted">
-        {draft.length} ký tự
+      <span class="mono-label text-xs text-ink-muted whitespace-nowrap shrink-0">
+        {draft.length} {$t('lesson.characters')}
       </span>
     </div>
 
-    <!-- Mode 1: Write (Rich Editor with Word-like Toolbar) -->
+    <!-- Mode 1: Soạn thảo (The Side-by-side Split View with RichToolbar on Left & Live Rendered Document on Right) -->
     {#if view === 'write'}
-      <Card class="overflow-hidden p-0 border border-border shadow-xs">
-        <RichToolbar onAction={handleToolbarAction} />
-        <textarea
-          bind:this={textareaEl}
-          name="bodyMd"
-          bind:value={draft}
-          onkeydown={handleKeydown}
-          rows="22"
-          class="w-full resize-y bg-surface p-4 font-mono text-sm leading-relaxed text-ink focus:outline-none"
-          placeholder="Nhập nội dung bài học..."
-        ></textarea>
-      </Card>
-    {/if}
-
-    <!-- Mode 2: Split View (Side-by-side Editor & Live Rendered Document) -->
-    {#if view === 'split'}
       <div class="grid gap-6 lg:grid-cols-2">
         <Card class="overflow-hidden p-0 border border-border shadow-xs flex flex-col">
           <RichToolbar onAction={handleToolbarAction} />
@@ -163,14 +147,14 @@
       </div>
     {/if}
 
-    <!-- Mode 3: Full Preview -->
+    <!-- Mode 2: Xem trước (Full-width Preview) -->
     {#if view === 'preview'}
       <Card class="min-h-96 rounded-lg border border-border bg-surface p-6 sm:p-8 shadow-xs">
         <MarkdownContent source={draft} />
       </Card>
     {/if}
 
-    <div class="flex items-center justify-between pt-2">
+    <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
       <Button type="submit">{$t('common.save')}</Button>
       <span class="font-mono text-xs text-ink-muted">
         Phím tắt: Ctrl+B (Đậm), Ctrl+I (Nghiêng), Ctrl+K (Link), Tab (Thụt dòng)

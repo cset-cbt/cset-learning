@@ -22,6 +22,7 @@ export const lessonsVi = {
   'lesson.toolbar.link': 'Liên kết',
   'lesson.toolbar.image': 'Hình ảnh',
   'lesson.toolbar.hr': 'Đường kẻ',
+  'lesson.characters': 'ký tự',
   'lesson.body': 'Nội dung Markdown',
   'lesson.attachments': 'Tệp đính kèm',
   'lesson.attachmentGuidance': 'Cho phép PDF, ảnh, văn bản và ZIP. Kích thước tối đa 10 MiB mỗi tệp.',
