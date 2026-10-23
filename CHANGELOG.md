@@ -26,3 +26,4 @@ All notable changes to CSET Learning are documented here, following Keep a Chang
 - Fixed quiz editor 500 error: relaxed question option identifier validation regex to support flexible formats (such as opt_a, l1, r1) and corrected seed matching pairs.
 - Randomized and shuffled quizzes: added configurable question count per attempt (randomly slicing N questions from larger banks), question order shuffling, and answer options order shuffling (migration `0003_windy_zuras.sql`).
 - Admin user avatars: rendered user avatars in the administrator user management table (`/admin/users`) alongside names and badges.
+- Clickable course cover banners: enabled direct course navigation when clicking course cover image banners and thumbnails across both catalog (`/courses`) and management (`/manage`) views.

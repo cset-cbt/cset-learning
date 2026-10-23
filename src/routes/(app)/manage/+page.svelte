@@ -52,7 +52,10 @@
         {#each data.courses as item (item.id)}
           <Card class="flex flex-col overflow-hidden p-0 transition-all hover:border-accent/40">
             <!-- Cover image thumbnail or Blueprint pattern -->
-            <div class="relative h-40 w-full overflow-hidden bg-surface-muted border-b border-border">
+            <a
+              href={resolve('/(app)/manage/[courseId]', { courseId: item.id })}
+              class="relative block h-40 w-full overflow-hidden bg-surface-muted border-b border-border cursor-pointer"
+            >
               {#if item.coverImageUrl}
                 <img
                   src={item.coverImageUrl}
@@ -71,7 +74,7 @@
                   {$t(item.status === 'published' ? 'manage.status.published' : 'manage.status.draft')}
                 </Badge>
               </div>
-            </div>
+            </a>
 
             <!-- Content body -->
             <div class="flex flex-1 flex-col justify-between p-5 space-y-4">
