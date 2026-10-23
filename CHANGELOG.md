@@ -27,3 +27,4 @@ All notable changes to CSET Learning are documented here, following Keep a Chang
 - Randomized and shuffled quizzes: added configurable question count per attempt (randomly slicing N questions from larger banks), question order shuffling, and answer options order shuffling (migration `0003_windy_zuras.sql`).
 - Admin user avatars: rendered user avatars in the administrator user management table (`/admin/users`) alongside names and badges.
 - Clickable course cover banners: enabled direct course navigation when clicking course cover image banners and thumbnails across both catalog (`/courses`) and management (`/manage`) views.
+- Polished quiz authoring view: stretched item title input field to full width, aligned quiz settings inputs horizontally on a single baseline, removed duplicate question section heading, and replaced verbose text with compact chevron icon buttons for question reordering.

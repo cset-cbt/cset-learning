@@ -5,7 +5,17 @@
   let { title }: { title: string } = $props();
 </script>
 
-<form method="POST" action="?/renameItem" class="flex flex-wrap items-end gap-3">
-  <InputField label={$t('manage.itemTitle')} name="title" value={title} required maxlength="120" />
-  <Button type="submit" variant="secondary">{$t('common.rename')}</Button>
+<form method="POST" action="?/renameItem" class="flex flex-col gap-3 sm:flex-row sm:items-end">
+  <div class="flex-1 min-w-0">
+    <InputField
+      label={$t('manage.itemTitle')}
+      name="title"
+      value={title}
+      required
+      maxlength={120}
+    />
+  </div>
+  <Button type="submit" variant="secondary" class="shrink-0">
+    {$t('common.rename')}
+  </Button>
 </form>

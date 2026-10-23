@@ -62,7 +62,7 @@
   <Card>
     <form method="POST" action="?/saveQuizSettings" use:enhance={enhanceSettings} class="space-y-4">
       <h2 class="text-xl font-semibold text-ink">{$t('quiz.editor.settings')}</h2>
-      <div class="grid gap-4 sm:grid-cols-3">
+      <div class="grid gap-4 sm:grid-cols-3 sm:items-start">
         <InputField
           label={$t('quiz.editor.passPercent')}
           type="number"
@@ -72,35 +72,34 @@
           name="passPercent"
           value={passPercent}
           oninput={(event: Event) => (passPercent = eventValue(event))}
+          placeholder="70"
         />
-        <div class="space-y-1">
-          <InputField
-            label={$t('quiz.editor.maxAttempts')}
-            type="number"
-            min="1"
-            max="100"
-            step="1"
-            name="maxAttempts"
-            value={maxAttempts}
-            oninput={(event: Event) => (maxAttempts = eventValue(event))}
-          />
-          <p class="text-[0.68rem] text-ink-muted">{$t('quiz.editor.unlimited')}</p>
-        </div>
-        <div class="space-y-1">
-          <InputField
-            label={$t('quiz.editor.questionCount')}
-            type="number"
-            min="1"
-            max="200"
-            step="1"
-            name="questionCount"
-            value={questionCount}
-            oninput={(event: Event) => (questionCount = eventValue(event))}
-          />
-          <p class="text-[0.68rem] text-ink-muted">{$t('quiz.editor.questionCountHint')}</p>
-        </div>
+        <InputField
+          label={$t('quiz.editor.maxAttempts')}
+          type="number"
+          min="1"
+          max="100"
+          step="1"
+          name="maxAttempts"
+          value={maxAttempts}
+          oninput={(event: Event) => (maxAttempts = eventValue(event))}
+          placeholder={$t('quiz.editor.unlimited')}
+        />
+        <InputField
+          label={$t('quiz.editor.questionCount')}
+          type="number"
+          min="1"
+          max="200"
+          step="1"
+          name="questionCount"
+          value={questionCount}
+          oninput={(event: Event) => (questionCount = eventValue(event))}
+          placeholder={$t('quiz.editor.unlimited')}
+        />
       </div>
-
+      <p class="text-[0.68rem] text-ink-muted -mt-1">
+        {$t('quiz.editor.questionCountHint')}
+      </p>
       <div class="flex flex-wrap gap-6 pt-3 border-t border-border">
         <label class="flex items-center gap-2 text-xs font-semibold text-ink cursor-pointer select-none">
           <input
